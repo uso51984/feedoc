@@ -84,7 +84,7 @@ y instanceof Constr // true
 
 ## this
 ### 1.this简述
-`this` 在构造函数之中，表示实例对象. this就是属性或方法“当前”所在的对象
+`this` a.在构造函数之中，表示实例对象. b.this就是属性或方法“当前”所在的对象. c.用apply,call,bind的情况略为特殊
 ```js
 this.property
 ```
@@ -337,34 +337,837 @@ console.log('script end')
 遗留的例外是存在的，如 `alert` 或者同步 XHR，但应该尽量避免使用它们。
 
 ## js垃圾回收的方法有哪些
-
-## 前端缓存，etag、expires、cache-control
+### 1.标记清除（mark-and-sweep）
+目前主流的垃圾收集算法，这种算法的思想是给当前不使用的值加上标记，然后再回收其内存
+### 2.引用计数
+引用计数的含义是跟踪记录每个值被引用的次数。当声明了一个变量并将一个引用类型值赋给该变量时，则这个值的引用次数就是1。如果同一个值又被赋给另一个变量，则该值的引用次数加1。相反，如果包含对这个值引用的变量又取得了另外一个值，则这个值的引用次数减1。当这个值的引用次数变成0时，则说明没有办法再访问这个值了，因而就可以将其占用的内存空间回收回来。
+> V8 的垃圾回收策略主要基于分代式垃圾回收机制。所谓分代式，就是将内存空间分为新生代和老生代两种，然后采用不同的回收算法进行回收。[查看详细](https://www.jianshu.com/p/7e74b6dcde69)
 
 ## js延迟加载的方式有哪些， defer和async的区别
+### 1.defer属性
+这个属性的用途是表明脚本在执行时不会影响页面的构造。也就是说，脚本会被延迟到整个页面都解析完毕后再运行。因此，在`<script>`元素中设置defer属性，相当于告诉浏览器立即下载，但延迟执行。
+### 2.async属性
+同样与defer类似，async只适用于外部脚本文件，并告诉浏览器立即下载文件。但与defer不同的是，标记为async的脚本并不保证按照指定它们的先后顺序执行。
+### 3.动态创建DOM方式
+```js
+function downloadJSAtOnload() {
+    varelement = document.createElement("script");
+    element.src = "defer.js";
+    document.body.appendChild(element);
+}
+```
+### 4.放body底部
 
 ## 事件委托
+用于处理“事件处理程序过多”问题，利用事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。
+### 优点：
+1.只添加一个事件处理程序所需的DOM引用更少，所花的时间也更少。
+2.整个页面占用的内存空间更少，能够提升整体性能。
+3.如果是给document对象很快就可以访问，而且可以在页面生命周期的任何时点上为它添加事件处理程序（无需等待DOMCon-tentLoaded或load事件）
 
 ## bind, call, apply解释
+### 一、函数4种调用的方式
+* 1.函数模式
+* 2.方法模式
+* 3.构造函数模式
+* 4.上下文模式(也有叫apply模式)
+
+### 二、apply, call, bind用法
+
+在JavaScript 中，call、apply 和 bind 是 Function 对象自带的三个方法，这三个方法的主要作用是改变函数调用过程中的 this 指向
+
+#### 1. apply(thisArgs, [argsArray])
+* 第一个参数：指定函数体内this对象的指向
+  thisArgs 的取值有以下4种情况：
+  * 不传，或者传`null`,`undefined`， **非严格模式下** 函数中的 `this` 指向 `window` 对象。 **严格模式**下`不传`、`undefined` 函数中`this`指向`undefined`。`传入null`函数中`this`指向`null`
+  * 传递另一个函数的函数名，函数中的 `this` 指向这个函数的引用
+  * 传递字符串、数值或布尔类型等基础类型，**非严格模式**函数中的 `this` 指向其对应的包装对象，如 `String`、`Number`、`Boolean`。**严格模式**，指向传入的值
+  * 传递一个对象，函数中的 `this` 指向这个对象
+* 第二个参数：可以是数组或类数组,apply方法把这个集合中的元素作为参数传递给被调用的函数
+
+```javascript
+var func = function(a, b, c) {
+  console.log([a, b, c]); // [1,2,3]
+}
+func.apply(null, [1,2,3])
+```
+
+#### 2. call(thisArgs, arg1, arg2, ...)
+* 第一个参数thisArgs： 的取值跟apply一样
+* 后面是个参数列表`arg1, arg2, ...`
+```javascript
+function a(){
+    console.log(this); //输出函数a中的this对象
+}
+function b(){} //定义函数b
+
+var obj = {name:'onepixel'}; //定义对象obj
+// 严格模式
+a.call(); //undefined
+a.call(null); //null
+a.call(undefined);//undefined
+a.call(1); //1
+a.call(''); // ''
+a.call(true); //true
+a.call(b);// function b(){}
+a.call(obj); //Object
+ // 非严格模式
+a.call(); //window
+a.call(null); //window
+a.call(undefined);//window
+a.call(1); //Number
+a.call(''); //String
+a.call(true); //Boolean
+a.call(b);// function b(){}
+a.call(obj); //Object
+```
+> 当使用call或则apply的时候，如果我们传入的第一个参数是null．函数体内的this会指向默认的宿主对象，在游览器中则是window
+
+```javascript
+var func = function( a, b, c ){
+  alert ( this === window );    // 输出true
+};
+func.apply( null, [ 1, 2, 3 ] );
+```
+>但如果是在严格模式下，函数体内的this还是为null：
+
+```javascript
+var func = function( a, b, c ){
+  "use strict";
+  alert ( this === null );     // 输出true
+}
+func.apply( null, [ 1, 2, 3 ] );
+```
+有时候我们使用call或者apply的目的不在于指定this指向，而是另有用途，比如借用其他对象的方法。
+那么我们可以传入null来代替某个具体的对象：
+`Math.max.apply( null, [ 1, 2, 5, 3, 4 ] )    // 输出：5`
+>apply 和 call 的唯一区别是第二个参数的传递方式不同，apply 的第二个参数必须是一个数组，而 call 允许传递一个参数列表。值得你注意的是，虽然 apply 接收的是一个参数数组，但在传递给调用函数时，却是以参数列表的形式传递，我们看个简单的例子：
+
+### 3. bind(thisArgs, arg1, arg2, ...)
+
+bind是ES5 新增的一个方法，它的传参和call类似，但又和 call/apply 有着显著的不同，即调用 call 或 apply 都会自动执行对应的函数，而 bind 不会执行对应的函数，只是返回一个原函数的拷贝，并拥有指定的this值和初始参数。
+
+```
+var obj = {name:'onepixel'};
+/**
+ * 给document添加click事件监听，并绑定onClick函数
+ * 通过bind方法设置onClick的this为obj，并传递参数p1,p2
+ */
+document.addEventListener('click',onClick.bind(obj,'p1','p2'),false);
+
+//当点击网页时触发并执行
+function onClick(a,b){
+  console.log(
+    this.name, //onepixel
+    a, //p1
+    b  //p2
+  )
+}
+```
 
 ## CMD、AMD、CommonJS、ES Modules说明
 
-## spread, rest用法
-
-## Promise中 .then的第二个参数与.catch有什么区别
-
 ## const 定义的 Array/Object 中间元素能否被修改? 如果能被修改，const 的意义何在？然后 怎么能防止修改？ 可以；意义在保证变量类型不变；freeze()
+可以被修改，`const`保证的变量指向的那个内存地址所保存的数据不得改动，而引用类型数据内存地址存储的只是指向实际数据的指针。 用`const`定义引用类似可以保证变量的数据类型不会发生变化。
 
-## 什么是跨域请求? 如何允许跨域? 如何允许所有域名跨域（不能通过代理转发）？
+冻结对象使用Object.freeze方法
+```js
+const foo = Object.freeze({});
+
+// 常规模式时，下面一行不起作用；
+// 严格模式时，该行会报错
+foo.prop = 123;
+```
+
+## 跨域。如何允许所有域名跨域（不能通过代理转发）？
+### 1、同源策略：
+协议相同、域名相同、端口相同
+
+### 2、目的
+同源政策的目的，是为了保证用户信息的安全，防止恶意的网站窃取数据。否则 Cookie 可以共享，互联网就毫无安全可言
+设想这样一种情况：A网站是一家银行，用户登录以后，又去浏览其他网站。如果其他网站可以读取A网站的 Cookie，会发生什么？
+很显然，如果 Cookie 包含隐私（比如存款总额），这些信息就会泄漏。更可怕的是，Cookie 往往用来保存用户的登录状态，如果用户没有退出登录，其他网站就可以冒充用户，为所欲为。因为浏览器同时还规定，提交表单不受同源政策的限制。
+
+### 3、限制范围
+* Cookie、LocalStorage 和 IndexDB 无法读取。
+* DOM 无法获得。
+* AJAX 请求发送后，结果被浏览器拦截了。
+> 跨域并不是请求发不出去，请求能发出去，服务端能收到请求并正常返回结果，只是结果被浏览器拦截了
+有三个标签是允许跨域加载资源：
+
+* `<img src=XXX>`
+* `<link href=XXX>`
+* `<script src=XXX>`
+>注意：
+> * **第一：如果是协议和端口造成的跨域问题“前端”是无能为力的。**
+> * **第二：在跨域问题上，仅仅是通过“URL的首部”来识别而不会根据域名对应的IP地址是否相同来判断。“URL的首部”可以理解为“协议, 域名和端口必须匹配”**。
+
+### 跨域方法
+#### 一、JSONP
+* **原理：** 网页通过添加一个`<script>`元素，向服务器请求JSON数据，这种做法不受同源政策限制；服务器收到请求后，将数据放在一个指定名字的回调函数里传回来。JSONP请求一定需要对方的服务器做支持才可以。
+* **优点：** 简单适用，老式浏览器全部支持，服务器改造非常小。
+* **缺点：**  仅支持get方法具有局限性,不安全可能会遭受XSS攻击。
+* **基础实现**
+
+```js
+// 客户端
+function jsonp({ url, params, callback }) {
+  return new Promise((resolve, reject) => {
+    let script = document.createElement('script')
+    window[callback] = function(data) {
+      resolve(data)
+      document.body.removeChild(script)
+    }
+    params = { ...params, callback } // wd=b&callback=show
+    let arrs = []
+    for (let key in params) {
+      arrs.push(`${key}=${params[key]}`)
+    }
+    script.src = `${url}?${arrs.join('&')}`
+    document.body.appendChild(script)
+  })
+}
+
+jsonp({
+  url: 'http://example.com/say',
+  params: { wd: 'Iloveyou' },
+  callback: 'getIp'
+}).then(data => {
+  console.log(data)
+})
+
+// 服务端
+let express = require('express')
+let app = express()
+app.get('/say', function(req, res) {
+  let { wd, callback } = req.query
+  res.end(`${callback}({
+  "ip": "8.8.8.8"
+})`)
+})
+```
+
+#### 二、WebSocket
+WebSocket是一种通信协议，使用`ws://`（非加密）和`wss://`（加密）作为协议前缀。该协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信。
+
+下面是一个例子，浏览器发出的WebSocket请求的头信息（摘自[维基百科](https://en.wikipedia.org/wiki/WebSocket)）。
+
+```
+GET /chat HTTP/1.1
+Host: server.example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw==
+Sec-WebSocket-Protocol: chat, superchat
+Sec-WebSocket-Version: 13
+Origin: http://example.com
+```
+
+上面代码中，有一个字段是`Origin`，表示该请求的请求源（origin），即发自哪个域名。
+正是因为有了`Origin`这个字段，所以WebSocket才没有实行同源政策。因为服务器可以根据这个字段，判断是否许可本次通信。如果该域名在白名单内，服务器就会做出如下回应。
+
+```
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
+Sec-WebSocket-Protocol: chat
+```
+
+#### 三、 CORS
+CORS是跨源资源分享（Cross-Origin Resource Sharing）的缩写。它是W3C标准，是跨源AJAX请求的根本解决方法。相比JSONP只能发`GET`请求，CORS允许任何类型的请求。需要浏览器和后端同时支持。IE 8 和 9 需要通过 XDomainRequest 来实现。
+浏览器会自动进行 CORS 通信，实现 CORS 通信的关键是后端。只要后端实现了 CORS，就实现了跨域。
+
+#### 四、 postMessage
+`postMessage`是HTML5 XMLHttpRequest Level 2中的API，且是为数不多可以跨域操作的window属性之一，它可用于解决以下方面的问题：
+
+* 1. 页面和其打开的新窗口的数据传递(window.open)
+* 2. 多窗口之间消息传递
+* 3. 页面与嵌套的iframe消息传递
+* 4. 上面三个场景的跨域数据传递
+
+> 注意： 据我 实际项目使用中，IE11在跨域的情况下传输信息很不稳定，如果要兼容IE11,慎用。  建议用修改domain的方法
+
+**postMessage()方法允许来自不同源的脚本采用异步方式进行有限的通信，可以实现跨文本档、多窗口、跨域消息传递**。
+
+> otherWindow.postMessage(message, targetOrigin, [transfer]);
+
+* message: 将要发送到其他 window的数据。
+* targetOrigin:通过窗口的origin属性来指定哪些窗口能接收到消息事件，其值可以是字符串"*"（表示无限制）或者一个URI。在发送消息的时候，如果目标窗口的协议、主机地址或端口这三者的任意一项不匹配targetOrigin提供的值，那么消息就不会被发送；只有三者完全匹配，消息才会被发送。
+* transfer(可选)：是一串和message 同时传递的 Transferable 对象. 这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权。
+
+接下来我们看个例子： `http://localhost:3000/a.html`页面向`http://localhost:4000/b.html`传递“我爱你”,然后后者传回"我不爱你"。
+
+```
+// a.html
+  <iframe src="http://localhost:4000/b.html" frameborder="0" id="frame" onload="load()"></iframe> //等它加载完触发一个事件
+  //内嵌在http://localhost:3000/a.html
+    <script>
+      function load() {
+        let frame = document.getElementById('frame')
+        frame.contentWindow.postMessage('我爱你', 'http://localhost:4000') //发送数据
+        window.onmessage = function(e) { //接受返回数据
+          console.log(e.data) //我不爱你
+        }
+      }
+    </script>
+```
+```
+// b.html
+  window.onmessage = function(e) {
+    console.log(e.data) //我爱你
+    e.source.postMessage('我不爱你', e.origin)
+ }
+```
+
+#### 五、 window.name + iframe
+window.name属性的独特之处：name值在不同的页面（甚至不同域名）加载后依旧存在，并且可以支持非常长的 name 值（2MB）。
+
+其中a.html和b.html是同域的，都是`http://localhost:3000`;而c.html是`http://localhost:4000`
+
+```
+ // a.html(http://localhost:3000/b.html)
+  <iframe src="http://localhost:4000/c.html" frameborder="0" onload="load()" id="iframe"></iframe>
+  <script>
+    let first = true
+    // onload事件会触发2次，第1次加载跨域页，并留存数据于window.name
+    function load() {
+      if(first){
+      // 第1次onload(跨域页)成功后，切换到同域代理页面
+        let iframe = document.getElementById('iframe');
+        iframe.src = 'http://localhost:3000/b.html';
+        first = false;
+      }else{
+      // 第2次onload(同域b.html页)成功后，读取同域window.name中数据
+        console.log(iframe.contentWindow.name);
+      }
+    }
+  </script>
+```
+b.html为中间代理页，与a.html同域，内容为空。
+
+```
+ // c.html(http://localhost:4000/c.html)
+  <script>
+    window.name = '我不爱你'
+  </script>
+```
+总结：通过iframe的src属性由外域转向本地域，跨域数据即由iframe的window.name从外域传递到本地域。这个就巧妙地绕过了浏览器的跨域访问限制，但同时它又是安全操作。
+
+#### 七、location.hash + iframe
+实现原理： a.html欲与c.html跨域相互通信，通过中间页b.html来实现。 三个页面，不同域之间利用iframe的location.hash传值，相同域之间直接js访问来通信。
+
+具体实现步骤：一开始a.html给c.html传一个hash值，然后c.html收到hash值后，再把hash值传递给b.html，最后b.html将结果放到a.html的hash值中。
+同样的，a.html和b.html是同域的，都是`http://localhost:3000`;而c.html是`http://localhost:4000`
+
+```
+ // a.html
+  <iframe src="http://localhost:4000/c.html#iloveyou"></iframe>
+  <script>
+    window.onhashchange = function () { //检测hash的变化
+      console.log(location.hash);
+    }
+  </script>
+```
+```
+ // b.html
+  <script>
+    window.parent.parent.location.hash = location.hash
+    //b.html将结果放到a.html的hash值中，b.html可通过parent.parent访问a.html页面
+  </script>
+```
+```
+ // c.html
+ console.log(location.hash);
+  let iframe = document.createElement('iframe');
+  iframe.src = 'http://localhost:3000/b.html#idontloveyou';
+  document.body.appendChild(iframe);
+```
+
+#### 八、document.domain + iframe
+**该方式只能用于二级域名相同的情况下，比如 `a.test.com` 和 `b.test.com` 适用于该方式**。
+只需要给页面添加 `document.domain ='test.com'` 表示二级域名都相同就可以实现跨域。
+
+实现原理：两个页面都通过js强制设置document.domain为基础主域，就实现了同域。
+##### 常用场景：
+* 1. 页面和其打开的新窗口的数据传递(window.open)
+* 3. 页面与嵌套的iframe消息传递
+
+我们看个例子：页面`a.zf1.cn:3000/a.html`获取页面`b.zf1.cn:3000/b.html`中a的值
+```
+// a.html
+<body>
+ helloa
+  <iframe src="http://b.zf1.cn:3000/b.html" frameborder="0" onload="load()" id="frame"></iframe>
+  <script>
+    document.domain = 'zf1.cn'
+    function load() {
+      console.log(frame.contentWindow.a);
+    }
+  </script>
+</body>
+```
+```
+// b.html
+<body>
+   hellob
+   <script>
+     document.domain = 'zf1.cn'
+     var a = 100;
+   </script>
+</body>
+```
+
+#### 九、Cookie
+
+Cookie 是服务器写入浏览器的一小段信息，只有同源的网页才能共享。
+* 两个网页一级域名相同，只是二级域名不同，浏览器允许通过设置document.domain共享 Cookie。
+举例来说，A网页是http://w1.example.com/a.html，B网页是http://w2.example.com/b.html，那么只要设置相同的document.domain，两个网页就可以共享Cookie。
+
+```js
+document.domain = 'example.com';
+```
+
+现在，A网页通过脚本设置一个 Cookie。
+```js
+document.cookie = "test1=hello";
+```
+
+B网页就可以读到这个 Cookie。
+
+```js
+var allCookie = document.cookie;
+```
+
+>* 注意，这种方法只适用于 Cookie 和 iframe 窗口，LocalStorage 和 IndexDB 无法通过这种方法，规避同源政策，而要使用下文介绍的PostMessage API。
+> * 服务器也可以在设置Cookie的时候，指定Cookie的所属域名为一级域名，比如.example.com。
+
+```js
+Set-Cookie: key=value; domain=.example.com; path=/
+```
+
+这样的话，二级域名和三级域名不用做任何设置，都可以读取这个Cookie。
+
+#### 十、Node中间件代理(两次跨域)
+实现原理：**同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略。**
+代理服务器，需要做以下几个步骤：
+* 接受客户端请求 。
+* 将请求 转发给服务器。
+* 拿到服务器 响应 数据。
+* 将响应 转发给客户端。
+
+![image.png](https://upload-images.jianshu.io/upload_images/1877305-3c84f7ed8df0f461.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+
+我们先来看个例子：本地文件index.html文件，通过代理服务器`http://localhost:3000`向目标服务器`http://localhost:4000`请求数据。
+
+```js
+// index.html(http://127.0.0.1:5500)
+ <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+      $.ajax({
+        url: 'http://localhost:3000',
+        type: 'post',
+        data: { name: 'xiamen', password: '123456' },
+        contentType: 'application/json;charset=utf-8',
+        success: function(result) {
+          console.log(result) // {"title":"fontend","password":"123456"}
+        },
+        error: function(msg) {
+          console.log(msg)
+        }
+      })
+     </script>
+```
+
+```js
+// server1.js 代理服务器(http://localhost:3000)
+const http = require('http')
+// 第一步：接受客户端请求
+const server = http.createServer((request, response) => {
+  // 代理服务器，直接和浏览器直接交互，需要设置CORS 的首部字段
+  response.writeHead(200, {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  })
+  // 第二步：将请求转发给服务器
+  const proxyRequest = http
+    .request(
+      {
+        host: '127.0.0.1',
+        port: 4000,
+        url: '/',
+        method: request.method,
+        headers: request.headers
+      },
+      serverResponse => {
+        // 第三步：收到服务器的响应
+        var body = ''
+        serverResponse.on('data', chunk => {
+          body += chunk
+        })
+        serverResponse.on('end', () => {
+          console.log('The data is ' + body)
+          // 第四步：将响应结果转发给浏览器
+          response.end(body)
+        })
+      }
+    )
+    .end()
+})
+server.listen(3000, () => {
+  console.log('The proxyServer is running at http://localhost:3000')
+})
+```
+
+```js
+// server2.js(http://localhost:4000)
+const http = require('http')
+const data = { title: 'fontend', password: '123456' }
+const server = http.createServer((request, response) => {
+  if (request.url === '/') {
+    response.end(JSON.stringify(data))
+  }
+})
+server.listen(4000, () => {
+  console.log('The server is running at http://localhost:4000')
+})
+```
+上述代码经过两次跨域，值得注意的是浏览器向代理服务器发送请求，也遵循同源策略，最后在index.html文件打印出`{"title":"fontend","password":"123456"}`
+
+#### 十一、反向代理
+跟五点类似，利用nginx,apache,等服务设置反向代理
+
+```bash
+// proxy服务器
+server {
+  listen       80;
+  server_name  www.domain1.com;
+  location / {
+    proxy_pass   http://www.domain2.com:8080;  #反向代理
+    proxy_cookie_domain www.domain2.com www.domain1.com; #修改cookie里域名
+    index  index.html index.htm;
+    # 当用webpack-dev-server等中间件代理接口访问nignx时，此时无浏览器参与，故没有同源限制，下面的跨域配置可不启用
+    add_header Access-Control-Allow-Origin http://www.domain1.com;  #当前端只跨域不带cookie时，可为*
+    add_header Access-Control-Allow-Credentials true;
+  }
+}
+```
+
+> 参考文献
+> * http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html
+> * https://juejin.im/post/5c23993de51d457b8c1f4ee1
 
 ## 高阶函数说明
+高阶函数定义：
+* 以一个函数作为参数
+* 以一个函数作为返回结果
+
+### 1. 高阶函数捕获参数
+##### 为啥需要创建一个以函数为返回值的函数？
+高阶函数的参数是用来“配置”返回函数的行为的。
+eg： makeAdder, 它参数配置了其返回函数每次添加数值的大小
+```
+var add100 = makeAdder(100);
+add100(40) // => 140
+```
+通过将函数makeAdder的返回函数命名为add100， 这里特别强调了返回函数是如何被"配置"的。 这是非常有用的，但其能力有限。不同的是， 经常会看到一个函数返回一个捕获变量的函数。
+
+### 2. 捕获变量的好处
+假如需要一个生产唯一字符串的函数
+```
+function uniqueString(len) {
+  return Math.random().toString(36).substr(2, len);
+}
+uniqueString(10); // => '3rms32dsx'
+```
+然而，如果要生成具有特定前缀的唯一字符串，怎么办? 可将uniqueString修改为
+```
+function uniqueString(prefix) {
+  return [prefix, new Date().getTIme()].join('');
+};
+uniqueString('test')
+uniqueString(10); // => 'test3rms32dsx'
+```
+如果需要再次变更， 需要返回一个添加了前缀，并且从某一个值开始增长的字符串，这种情况下，上述方法就不行了。 具体效果如下
+```
+uniqueString('ghosts'); // => 'ghosts0'
+uniqueString('test'); // => 'test1'
+```
+实现如下
+```
+function makeUniqueStringFunction(start) {
+   let count = start;
+  return (prefix)=>[prefix, count++].join('');
+}
+var uniqueString = makeUniqueStringFunction(0);
+
+uniqueString('ghosts'); // => 'ghosts0'
+uniqueString('test'); // => 'test1'
+```
+> makeUniqueStringFunction 使用了conut的变量来追踪当前值。 虽然对于外界操作来说，该变量是安全的， 但是它的存在会增加复杂度，当一个函数的返回值只依赖于它的参数时， 被称为：**引用透明**。 实际当中我们应该尽量避免这样的函数， 除非他们是绝对必要的。
+
 
 ## 浅比较or深比较
+1.`浅比较`:（也被称为 `引用相等`）只检查两个不同 变量 是否为同一对象的引用；与之相反，
 
-## es6(promise)
+2.`深比较`:（也被称为 `原值相等`）必须检查两个对象所有属性的 值 是否相等。
 
-## 常见的web安全问题及防护原理(xss，CSRF)
+>所以，浅比较就是简单的（且快速的）a === b，而深比较需要以递归的方式遍历两个对象的所有属性，在每一个循环中对比各个属性的值。
+
+## promise
+`Promise` 是异步编程的一种解决方案, ES6 原生提供了Promise对象。简单说就是一个容器，里面保存着某个未来才会结束的事件（通常是一个异步操作）
+### 1.特点：
+* (1).对象的状态不受外界影响, 三种状态：`pending（进行中）`、`fulfilled（已成功）`、`rejected（已失败)`
+* (2).一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise对象的状态改变，只有两种可能：从pending变为fulfilled和从pending变为rejected
+
+### 2.缺点：
+* (1). 无法取消Promise，一旦新建它就会立即执行，无法中途取消。
+* (2). 如果不设置回调函数，Promise内部抛出的错误，不会反应到外部。
+* (3). 当处于pending状态时，无法得知目前进展到哪一个阶段（刚刚开始还是即将完成）。
+
+### 3.Promise中 .then的第二个参数与.catch有什么区别
+`.catch`写法可以捕获前面then方法执行中的错误.
+```js
+// bad
+promise
+  .then(function(data) {
+    // success
+  }, function(err) {
+    // error
+  });
+
+// good
+promise
+  .then(function(data) { //cb
+    // success
+  })
+  .catch(function(err) {
+    // error
+  });
+```
+> 一般不要在then方法里面定义 Reject 状态的回调函数（即then的第二个参数），总是使用catch方法。Promise 对象后面要跟catch方法，这样可以处理 Promise 内部发生的错误。catch方法返回的还是一个 Promise 对象，因此后面还可以接着调用then方法。
+
+## 常见的web安全问题
+### 一、XSS(跨站脚本攻击)
+#### 1. 原理：
+攻击者往 Web 页面里插入可执行脚本代码，当用户浏览该页之时，脚本代码会被执行，从而盗取用户信息或侵犯用户安全隐私的目的
+#### 2. 跨站脚本攻击有可能造成以下影响:
+* (1). 利用虚假输入表单骗取用户个人信息。
+* (2). 窃取用户的Cookie值，帮助攻击者发送恶意请求。
+* (3). 显示伪造的文章或图片。
+
+### 3. 分类
+#### A.非持久型 XSS（反射型 XSS ）
+非持久型 XSS 漏洞，一般是通过 **带有恶意脚本代码参数的 URL**，当 URL 地址被打开时，特有的恶意代码参数被 HTML 解析、执行。
+##### 防御：
+* (1).Web 页面渲染的所有内容或者渲染的数据都必须来自于服务端。
+* (2).尽量不要从 `URL`，`document.referrer`，`document.forms` 等这种 DOM API 中获取数据直接渲染。
+* 不要使用 `eval`, `new Function()`，`document.write()`，`document.writeln()`，`window.setInterval()`，`window.setTimeout()`，`innerHTML`，`document.createElement()` 等可执行字符串的方法。
+* 如果做不到以上几点，也必须对涉及 DOM 渲染的方法传入的字符串参数做 `escape` 转义。
+
+#### B.持久型 XSS（存储型 XSS）
+持久型 XSS 漏洞，一般存在于 Form 表单提交等交互功能，利用的 XSS 漏洞，将内容经正常功能提交进入数据库持久保存，当前端页面获得后端从数据库中读出的注入代码时，将其渲染执行。
+
+##### 1.攻击成功条件：
+* POST 请求提交表单后端没做转义直接入库。
+* 后端从数据库中取出数据没做转义直接输出给前端。
+* 前端拿到后端数据没做转义直接渲染成 DOM。
+
+#### 2.防御
+##### (1). HttpOnly
+游览器将禁止页面的javascript访问带有HttpOnly属性的cookie
+> HttpOnly并非为了对抗XSS——HttpOnly解决的是XSS后的Cookie劫持攻击。
+
+##### (2). 输入检查 `XSS Filter`
+检查用户输入的数据中是否包含一些特殊字符或者单纯，如`<`、`>`、`'`、`"`、`<script>`等。如果发现存在特殊字符，则将这些字符**过滤**或者**编码**。
+
+##### (3). 输出检查
+一般来说，除了富文本的输出外，在变量输出到HTML页面时，可以使用编码或转义的方式来防御XSS攻击。
+
+#### (3). 安全的编码函数
+###### a、HTML代码的编码方式是`HtmlEncode`。在HtmlEncode中要求至少转换以下字符：
+```html
+& --> &amp;
+< --> &lt;
+> --> &gt;
+" --> &quot;
+' --> &#x27;
+/ --> &#x2F;　　
+```
+
+###### b、js的编码方式可以使用JavascriptEncode。
+###### c、在CSS中输出在CSS和style、style attribute中形成XSS 使用`encodeForCSS()`。
+
+###### d、在地址中输出： 在URL的path（路径）或者search（参数）中输出，使用`URLEncode`。
+
+##### (4). 处理富文本
+a. 在过滤富文本时，“事件”应该被严格禁止
+
+b. 危险的标签，比如`<iframe>`、`<script>`、`<base>`、`<form>`等，也是应该严格禁止的。在标签的选择上，应该使用白名单，避免使用黑名单。比如，只允许`<a>`、`<img>`、`<div>`等比较“安全”的标签存在。
+
+### 二、CSRF(跨站请求伪造)(Cross Site Request Forgery)
+它利用用户已登录的身份，在用户毫不知情的情况下，以用户的名义完成非法操作
+
+#### 防御方法
+##### 1、验证码
+验证码强制用户必须与应用进行交互，才能完成最终请求。因此在通常情况下，验证码能够很好地遏制CSRF攻击。但是验证码并非万能。很多时候，出于用户体验考虑，网站不能给所有的操作都加上验证码。因此，验证码只能作为防御CSRF的一种辅助手段，而不能作为最主要的解决方案。
+##### 2、Referer Check
+Referer Check在互联网中最常见的应用就是“防止图片盗链”。同理，Referer Check也可以被用于检查请求是否来自合法的“源”。
+> Referer Check的缺陷在于，服务器并非什么时候都能取到Referer。很多用户出于隐私保护的考虑，限制了Referer的发送。在某些情况下，浏览器也不会发送Referer，比如从HTTPS跳转到HTTP，出于安全的考虑，浏览器也不会发送Ref-erer。
+#### 3、Anti CSRF Token
+现在业界针对CSRF的防御，一致的做法是使用一个Token。
+
+### 三、点击劫持
+点击劫持是一种视觉上的欺骗手段。攻击者使用一个透明的、不可见的iframe，覆盖在一个网页上，然后诱使用户在该网页上进行操作，此时用户将在不知情的情况下点击透明的iframe页面。通过调整iframe页面的位置，可以诱使用户恰好点击在iframe页面的一些功能性按钮上。
+#### 防御方法
+##### 1、frame busting
+通常可以写一段JavaScript代码，以禁止iframe的嵌套。这种方法叫frame busting。
+但是frame busting也存在一些缺陷。由于它是用JavaScript写的，控制能力并不是特别强，因此有许多方法可以绕过它。
+##### 2、HTTP头 X-Frame-Options
+它有三个可选的值：
+* `DENY`： 浏览器会拒绝当前页面加载任何frame页面；
+* `SAMEORIGIN`：则frame页面的地址只能为同源域名下的页面
+* ALLOW-FROM origin：可以定义允许frame加载的页面地址。
+
+### 四、URL跳转漏洞
+定义：借助未验证的URL跳转，将应用程序引导到不安全的第三方区域，从而导致的安全问题。
+
+#### 1.实现方式：
+* Header头跳转
+* Javascript跳转
+* META标签跳转
+
+#### 2.防御
+##### (1).referer的限制
+如果确定传递URL参数进入的来源，我们可以通过该方式实现安全限制，保证该URL的有效性，避免恶意用户自己生成跳转链接
+
+##### (2).加入有效性验证Token
+
+### 五、SQL注入
+SQL注入是一种常见的Web安全漏洞，攻击者利用这个漏洞，可以访问或修改数据，或者利用潜在的数据库漏洞进行攻击。
+
+#### 1.SQL注入的原理
+一次SQL注入的过程包括以下几个过程：
+
+* 获取用户请求参数
+* 拼接到代码当中
+* SQL语句按照我们构造参数的语义执行成功
+
+#### 2.SQL注入的必备条件
+* (1).可以控制输入的数据
+* (2).服务器要执行的代码拼接了控制的数据。
+
+
+#### 3.危害
+* 获取数据库信息
+* 获取服务器权限
+* 植入Webshell，获取服务器后门
+* 读取服务器敏感文件
+
+#### 4.防御
+* (1). **严格限制Web应用的数据库的操作权限:** 给此用户提供仅仅能够满足其工作的最低权限，从而最大限度的减少注入攻击对数据库的危害
+* (2). **后端代码检查输入的数据是否符合预期:** 严格限制变量的类型，例如使用正则表达式进行一些匹配处理。
+* (3). **对进入数据库的特殊字符（'，"，\，<，>，&，*，; 等）进行转义处理，或编码转换**。基本上所有的后端语言都有对字符串进行转义处理的方法，比如 lodash 的 lodash._escapehtmlchar 库。
+* (4). **所有的查询语句建议使用数据库提供的参数化查询接口:** 参数化的语句使用参数而不是将用户输入变量嵌入到 SQL 语句中，即不要直接拼接 SQL 语句。例如 Node.js 中的 mysqljs 库的 query 方法中的 ? 占位参数。
+
+## 六、OS命令注入攻击
+OS命令注入和SQL注入差不多，只不过SQL注入是针对数据库的，而OS命令注入是针对操作系统的。OS命令注入攻击指通过Web应用，执行非法的操作系统命令达到攻击的目的。只要在能调用Shell函数的地方就有存在被攻击的风险。倘若调用Shell时存在疏漏，就可以执行插入的非法命令。
+
+命令注入攻击可以向Shell发送命令，让Windows或Linux操作系统的命令行启动程序。也就是说，通过命令注入攻击可执行操作系统上安装着的各种程序。
+
+### 2.如何防御
+* 后端对前端提交内容进行规则限制（比如正则表达式）。
+* 在调用系统命令前对所有传入参数进行命令行参数转义过滤。
+* 不要直接拼接命令语句，借助一些工具做拼接、转义预处理，例如 Node.js 的 `shell-escape npm`包
+
+> 详细见： https://www.jianshu.com/p/348b8fc76529
 
 ## 函数节流，防抖
+### 一、函数节流`throttle`
+* 主要功能： 在 wait 秒内最多执行 func 一次的函数。
+* 常用场景
+  1. 计算鼠标移动的距离（mousemove）
+  2. Canvas 模拟画板功能（mousemove）
+  3. 游戏的 mousedown/keydown 事件（单位时间只触发一次攻击）
+  6. scroll事件
+* 基本实现：
+
+```js
+export default function throttle(fn, threshhold = 250, scope) {
+  let last;
+  let deferTimer;
+
+  return function () {
+    let context = scope || this;
+    let now = +new Date;
+    let args = arguments;
+    if (last && now < last + threshhold) {
+      clearTimeout(deferTimer);
+      deferTimer = setTimeout(function () {
+        last = now;
+        fn.apply(context, args);
+      }, threshhold);
+    } else {
+      last = now;
+      fn.apply(context, args);
+    }
+  };
+}
+```
+
+### 二、 函数防抖 `debounce`
+* 主要功能：频繁触发的函数，在规定时间内，只让最后一次生效，前面的不生效。
+* 常用场景： onChange、mouseEnter、resize等事件
+* 原理： 通过闭包保存一个标记来保存 setTimeout 返回的值，每当事件调用防抖函数时如果没有超过指定时间间隔则把前一个 setTimeout clear 掉，然后又创建一个新的 setTimeout。如果超过指定时间间隔则调用事件任务
+
+* 基本实现
+```js
+export default function debounce(func, wait, immediate) {
+  let timeout;
+  let args;
+  let context;
+  let timestamp;
+  let result;
+
+  const later = function later() {
+    const last = +(new Date()) - timestamp;
+
+    if (last < wait && last >= 0) {
+      timeout = setTimeout(later, wait - last);
+    } else {
+      timeout = null;
+      if (!immediate) {
+        result = func.apply(context, args);
+        if (!timeout) {
+          context = null;
+          args = null;
+        }
+      }
+    }
+  };
+
+  return function debounced() {
+    context = this;
+    args = arguments;
+    timestamp = +(new Date());
+
+    const callNow = immediate && !timeout;
+    if (!timeout) {
+      timeout = setTimeout(later, wait);
+    }
+
+    if (callNow) {
+      result = func.apply(context, args);
+      context = null;
+      args = null;
+    }
+
+    return result;
+  };
+}
+```
 
 ## 事件机制
 
