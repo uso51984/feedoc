@@ -467,18 +467,6 @@ function onClick(a,b){
 
 ## CMD、AMD、CommonJS、ES Modules说明
 
-## const 定义的 Array/Object 中间元素能否被修改? 如果能被修改，const 的意义何在？然后 怎么能防止修改？ 可以；意义在保证变量类型不变；freeze()
-可以被修改，`const`保证的变量指向的那个内存地址所保存的数据不得改动，而引用类型数据内存地址存储的只是指向实际数据的指针。 用`const`定义引用类似可以保证变量的数据类型不会发生变化。
-
-冻结对象使用Object.freeze方法
-```js
-const foo = Object.freeze({});
-
-// 常规模式时，下面一行不起作用；
-// 严格模式时，该行会报错
-foo.prop = 123;
-```
-
 ## 跨域。如何允许所有域名跨域（不能通过代理转发）？
 ### 1、同源策略：
 协议相同、域名相同、端口相同
@@ -1169,7 +1157,53 @@ export default function debounce(func, wait, immediate) {
 }
 ```
 
-## 事件机制
+## 事件流
+![](./img/event.png )
+
+`DOM2级事件` 规定的事件流包括三个阶段：`事件捕获阶段`、`处于目标阶段`、`事件冒泡阶段`。
+> * 捕获阶段不会涉及事件目标
+> * IE9、Opera、Firefox、Chrome和Safari都支持DOM事件流；IE8及更早版本不支持DOM事件流。
+> * HTML事件、DOM0级事件不会触发捕获间断，DOM2级事件(addEventListener)的第三个参数，如果为false触发`目标阶段`和`冒泡阶段`，如果为false触发`捕获阶段`和`目标阶段`
+> * event对象属性eventPhase，1代表捕获阶段，2代表目标阶段，3代表冒泡阶段
+
+## 事件处理程序
+### 1. HTML事件处理程序
+直接在html中绑定事件。
+```
+<input type="button" value="Click Me" onclick="handleClick(event)" />
+<input type="button" value="Click Me" onblur="handleBlur(this)" />
+```
+> event变量，可以直接访问事件对象, this值等于事件的目标元素
+#### 缺点：
+* (1). 存在一个时差问题。因为用户可能会在HTML元素一出现在页面上就触发相应的事件，但当时的事件处理程序有可能尚不具备执行条件。
+* (2). 这样扩展事件处理程序的作用域链在不同浏览器中会导致不同结果。不同JavaScript引擎遵循的标识符解析规则略有差异，很可能会在访问非限定对象成员时出错
+
+## 2. DOM0级事件处理程序
+是将一个函数赋值给一个事件处理程序属性。
+```js
+var btn = document.getElementById("myBtn");
+btn.onclick = function(){alert("Clicked");};
+// 程序中的this引用当前元素。
+// 删除事件处理程序
+btn.onclick = null;
+```
+
+#### 3、DOM2级事件处理程序
+“DOM2级事件”定义了两个方法，用于处理指定和删除事件处理程序的操作：`addEventListener()`和`removeEventListener()`。所有DOM节点中都包含这两个方法，并且它们都接受3个参数：
+* 1. 要处理的事件名、
+* 2. 作为事件处理程序的函数
+* 3. 一个布尔值。最后这个布尔值参数如果是`true`，表示在捕获阶段调用事件处理程序；如果是`false`，表示在冒泡阶段调用事件处理程序。
+
+> 使用DOM2级方法添加事件处理程序的主要好处是可以添加多个事件处理程序。
+
+```
+var btn = document.getElementById("myBtn");
+btn.addEventListener("click", function(){alert(this.id);}, false);
+
+btn.addEventListener("click", function(){alert("Hello world!"); }, false);
+```
+> 扩展：DOM3级事件规定的是事件类型比如鼠标事件，键盘事件，以及一些html5事件
+
 
 ## 浏览器的事件循环和nodejs事件循环的区别
 
@@ -1178,8 +1212,68 @@ export default function debounce(func, wait, immediate) {
 ## 数组常用方法， 数组怎么去重
 
 ## let var const 的区别
+### var
+1.声明的变量只有全局作用域和函数作用域
+2.有变量提升
 
-## const a = [] a.push('sadf') 不报错的原因
+### let const
+1.块级作用域
+2.无变量提升(暂时性死区): 在代码块内，使用`let`命令声明变量之前，该变量都是不可用的。这在语法上
+
+## const 定义的 Array/Object 中间元素能否被修改? 如果能被修改，const 的意义何在？然后 怎么能防止修改？
+可以被修改，`const`保证的变量指向的那个内存地址所保存的数据不得改动，而引用类型数据内存地址存储的只是指向实际数据的指针。 用`const`定义引用类似可以保证变量的数据类型不会发生变化。
+
+冻结对象使用Object.freeze方法
+```js
+const foo = Object.freeze({});
+
+// 常规模式时，下面一行不起作用；
+// 严格模式时，该行会报错
+foo.prop = 123;
+```
+## 原生dom操作方法
+1. `appendChild()`: 将一个节点添加到指定父节点的子节点列表末尾, 如果传入到appendChild()中的节点已经是文档的一部分了，那结果就是将该节点从原来的位置转移到新位置。即使可以将DOM树看成是由一系列指针连接起来的，但任何DOM节点也不能同时出现在文档中的多个位置上。
+```
+//将一个节点添加到指定父节点的子节点列表末尾。
+const child = node.appendChild(child);
+// node: 是要插入子节点的父节点.
+// child: 即是参数又是这个方法的返回值.
+```
+2. `insertBefore()` 参考节点之前插入一个节点作为一个指定父节点的子节点
+```
+const insertedElement = parentElement.insertBefore(newElement, referenceElement);
+//1. referenceElement为null则newElement将被插入到子节点的末尾。
+//2. 如果newElement已经在DOM树中，newElement首先会从DOM树中移除。
+```
+>`insertedElement` 是被插入的节点，即 newElement
+`parentElement`  是新插入节点的父节点
+`newElement` 是被插入的节点
+`referenceElement` 在插入newElement之前的那个节点
+
+3.`replaceChild()`: 接受的两个参数是：要插入的节点和要替换的节点
+```
+replacedNode = parentNode.replaceChild(newChild, oldChild);
+// newChild 用来替换 oldChild 的新节点。如果该节点已经存在于DOM树中，则它会被从原始位置删除。
+// oldChild  被替换掉的原始节点。
+// replacedNode 和 oldChild相等。
+```
+4. `removeChild()` 从DOM中删除一个子节点。返回删除的节点
+
+```
+let oldChild = node.removeChild(child);
+//OR
+element.removeChild(child);
+// child 是要移除的那个子节点.
+// node 是child的父节点.
+// oldChild保存对删除的子节点的引用. oldChild === child.
+```
+
+5. `cloneNode()`: 接受一个布尔值参数，表示是否执行深复制。在参数为true的情况下，执行深复制，也就是复制节点及其整个子节点树；在参数为false的情况下，执行浅复制，即只复制节点本身。
+6. `normalize()`
+
+> cloneNode 和 normalize 所有类型的节点都有
+
+
 
 ## ul li li li  调换第一个和最后一个dom的位置
 
