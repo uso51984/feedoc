@@ -1256,6 +1256,7 @@ replacedNode = parentNode.replaceChild(newChild, oldChild);
 // newChild 用来替换 oldChild 的新节点。如果该节点已经存在于DOM树中，则它会被从原始位置删除。
 // oldChild  被替换掉的原始节点。
 // replacedNode 和 oldChild相等。
+// 返回被替换掉的节点
 ```
 4. `removeChild()` 从DOM中删除一个子节点。返回删除的节点
 
@@ -1276,14 +1277,350 @@ element.removeChild(child);
 
 
 ## ul li li li  调换第一个和最后一个dom的位置
+```js
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+    <li>4</li>
+  </ul>
+  const ulEl = document.querySelector('ul');
+  const liElList = document.querySelectorAll('ul li');
+  const liElListLength = liElList.length;
+  const lastLi = liElList[liElListLength-1];
+  const firstLi = ulEl.replaceChild(liElList[liElListLength-1], liElList[0])
+  ulEl.appendChild(firstLi);
+```
 
 ## 图片懒加载如何实现
 
 ## js的sort方法内部使用的什么排序
+> 各游览器引擎实现方式有区别
+### Mozilla/Firefox : 归并排序（jsarray.c 源码）
+### Webkit
+底层实现用了 C++ 库中的 qsort() 方法（JSArray.cpp 源码）: http://trac.webkit.org/browser/trunk/Source/JavaScriptCore/runtime/JSArray.cpp#L428
+
+### v8
+sort源码： https://github.com/v8/v8/blob/ad82a40509c5b5b4680d4299c8f08d6c6d31af3c/src/js/array.js
+```js
+// In-place QuickSort algorithm.
+// For short (length <= 22) arrays, insertion sort is used for efficiency
+```
+
+v8 InsertionSort 和 QuickSort，数量小于22的数组使用 InsertionSort，比22大的数组则使用 QuickSort。
+
 
 ## 用JavaScript的异步实现sleep函数
+### es5 简易版
+```js
+console.log('start...');
+console.log('now time: ' + Date(/\d{10,10}/.exec(Date.now())));
+function sleep(sleepTime) {
+  for(var start = Date.now(); Date.now() - start <= sleepTime; ) { }
+}
+sleep(5000); // sleep 5 seconds
+console.log('end...');
+console.log('end time: ' + Date(/\d{10,10}/.exec(Date.now())));
+```
+
+### es6 简易版
+```js
+function sleep(interval) {
+  return new Promise(resolve => {
+    setTimeout(resolve, interval);
+  })
+}
+
+// 用法
+async function one2FiveInAsync() {
+  for(let i = 1; i <= 5; i++) {
+    console.log(i);
+    await sleep(1000);
+  }
+}
+
+one2FiveInAsync();
+```
 
 ## 如何实现深拷贝
+引用类型：对引用类型等号赋值，会进行地址的拷贝，最终两个变量指向同一份数据
+那么如何切断a和b之间的关系呢，根据拷贝的层级不同可以分为`浅拷贝`和`深拷贝`，浅拷贝就是只进行`一层拷贝`，深拷贝就是`无限层级拷贝`
+
+### 深拷贝
+深拷贝的问题其实可以分解成两个问题，浅拷贝+递归
+假设要写个`function`实现深拷贝需要注意的问题
+1. 对参数的检验
+2. 判断是否对象的逻辑要严谨
+3. 考虑数组的兼容
+4. 对Symbol，function等数据类型copy问题
+5. 递归爆栈问题
+6. 循环引用问题
+
+#### 一、递归实现
+```js
+export function clone(x) {
+  if (/*如果不是引用类型直接返回*/) {
+    return x;
+  }
+  const t = checkType(x);//检测试array还是object
+
+  let res;
+
+  if (t === 'array') {
+    res = [];
+    for (let i = 0; i < x.length; i++) {
+        // 避免一层死循环 a.b = a
+      res[i] = x[i] === x ? res: clone(x[i]);
+    }
+  } else if (t === 'object') {
+    res = {};
+    for(let key in x) {
+      if (hasOwnProp(x, key)) {
+        // 避免一层死循环 a.b = a
+        res[key] = x[key] === x ? res : clone(x[key]);
+      }
+    }
+  }
+
+    return res;
+}
+```
+> 此方法递归层数过大之后会有爆栈问题，// Maximum call stack size exceeded
+
+#### 二、JSON 方法实现
+```js
+// 通过JSON深拷贝
+export function cloneJSON(x, errOrDef = true) {
+  if (/*如果不是引用类型直接返回*/) {
+    return x;
+  }
+
+  try {
+    return JSON.parse(JSON.stringify(x));
+  } catch(e) {
+    if (errOrDef === true) {
+      throw e;
+    } else {
+      console.error('cloneJSON error: ' + e.message);
+      return errOrDef;
+    }
+  }
+}
+```
+> 1. 也有爆栈问题//// Maximum call stack size exceeded
+> 2. 循环引用情况直接报错// // Uncaught TypeError: Converting circular structure to JSON
+> 3. `undefined`、任意的`function`以及 `symbol`值，在序列化过程中会被忽略（出现在非数组对象的属性值中时）或者被转换成 null（出现在数组中时）
+> 4. symbol 为属性键的属性都会被完全忽略掉，即便 replacer 参数中强制指定包含了它们。
+
+#### 三、递归爆栈（消除递归，使用循环）
+```js
+// 循环
+export function cloneLoop(x) {
+  const t = checkType(x);
+
+  let root = x;
+
+  if (t === 'array') {
+    root = [];
+  } else if (t === 'object') {
+    root = {};
+  }
+
+    // 循环数组
+  const loopList = [
+    {
+      parent: root,
+      key: undefined,
+      data: x,
+    }
+  ];
+
+    while(loopList.length) {
+        // 深度优先
+        const node = loopList.pop();
+        const parent = node.parent;
+        const key = node.key;
+        const data = node.data;
+        const tt = type(data);
+
+        // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+        let res = parent;
+        if (typeof key !== 'undefined') {
+            res = parent[key] = tt === 'array' ? [] : {};
+        }
+
+        if (tt === 'array') {
+            for (let i = 0; i < data.length; i++) {
+                // 避免一层死循环 a.b = a
+                if (data[i] === data) {
+                    res[i] = res;
+                } else if (isClone(data[i])) {
+                    // 下一次循环
+                    loopList.push({
+                        parent: res,
+                        key: i,
+                        data: data[i],
+                    });
+                } else {
+                    res[i] = data[i];
+                }
+            }
+        } else if (tt === 'object'){
+            for(let k in data) {
+                if (hasOwnProp(data, k)) {
+                    // 避免一层死循环 a.b = a
+                    if (data[k] === data) {
+                        res[k] = res;
+                    } else if (isClone(data[k])) {
+                        // 下一次循环
+                        loopList.push({
+                            parent: res,
+                            key: k,
+                            data: data[k],
+                        });
+                    } else {
+                        res[k] = data[k];
+                    }
+                }
+            }
+        }
+    }
+
+    return root;
+}
+```
+> 1.无爆栈问题
+> 2.依然无法解决循环引用问题
+
+### 四、copy缓存对象(解决循环引用问题)
+```js
+const UNIQUE_KEY = 'bee' + (new Date).getTime();
+
+// weakmap：处理对象关联引用
+class SimpleWeakmap {
+  constructor() {
+    this.cacheArray = [];
+  }
+
+  set(key, value) {
+    this.cacheArray.push(key);
+    key[UNIQUE_KEY] = value;
+  }
+
+  get(key) {
+    return key[UNIQUE_KEY];
+  }
+
+  clear() {
+    for (let i = 0; i < this.cacheArray.length; i++) {
+        let key = this.cacheArray[i];
+        delete key[UNIQUE_KEY];
+    }
+    this.cacheArray.length = 0;
+  }
+}
+
+function getWeakMap(){
+    let result;
+    if(typeof WeakMap !== 'undefined' && type(WeakMap)== 'function'){
+        result = new WeakMap();
+        if(type(result) == 'weakmap'){
+            return result;
+        }
+    }
+    result = new SimpleWeakmap();
+
+    return result;
+}
+
+export function cloneForce(x) {
+    const uniqueData = getWeakMap();
+
+    const t = type(x);
+
+    let root = x;
+
+    if (t === 'array') {
+        root = [];
+    } else if (t === 'object') {
+        root = {};
+    }
+
+    // 循环数组
+    const loopList = [
+        {
+            parent: root,
+            key: undefined,
+            data: x,
+        }
+    ];
+
+    while(loopList.length) {
+        // 深度优先
+        const node = loopList.pop();
+        const parent = node.parent;
+        const key = node.key;
+        const source = node.data;
+        const tt = type(source);
+
+        // 初始化赋值目标，key为undefined则拷贝到父元素，否则拷贝到子元素
+        let target = parent;
+        if (typeof key !== 'undefined') {
+            target = parent[key] = tt === 'array' ? [] : {};
+        }
+
+        // 复杂数据需要缓存操作
+        if (isClone(source)) {
+            // 命中缓存，直接返回缓存数据
+            let uniqueTarget = uniqueData.get(source);
+            if (uniqueTarget) {
+                parent[key] = uniqueTarget;
+                continue; // 中断本次循环
+            }
+
+            // 未命中缓存，保存到缓存
+            uniqueData.set(source, target);
+        }
+
+        if (tt === 'array') {
+            for (let i = 0; i < source.length; i++) {
+                if (isClone(source[i])) {
+                    // 下一次循环
+                    loopList.push({
+                        parent: target,
+                        key: i,
+                        data: source[i],
+                    });
+                } else {
+                    target[i] = source[i];
+                }
+            }
+        } else if (tt === 'object'){
+            for(let k in source) {
+                if (hasOwnProp(source, k)) {
+                    if(k === UNIQUE_KEY) continue;
+                    if (isClone(source[k])) {
+                        // 下一次循环
+                        loopList.push({
+                            parent: target,
+                            key: k,
+                            data: source[k],
+                        });
+                    } else {
+                        target[k] = source[k];
+                    }
+                }
+            }
+        }
+    }
+
+    uniqueData.clear && uniqueData.clear();
+
+    return root;
+}
+```
+
+> 参考文献： https://segmentfault.com/a/1190000016672263
 
 ## 检测数组的方式
 ```js
