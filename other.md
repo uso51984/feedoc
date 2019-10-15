@@ -6,7 +6,7 @@
 * https://github.com/ganqqwerty/123-Essential-JavaScript-Interview-Questions
 * https://github.com/Advanced-Frontend/Daily-Interview-Question
 
-## 企鹅医生
+## 企鹅医生面试题
 
 ### T1 基础类问题
 
