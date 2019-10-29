@@ -140,11 +140,11 @@ var person = {
     }
     getAge() // undefined
     const obj = {
-                name: 'xxx',
-                age: 32,
-                getAge,
-                getName
-               }
+      name: 'xxx',
+      age: 32,
+      getAge,
+      getName
+    }
     obj.getAge() // object a
     obj.getName() // window
 </script>

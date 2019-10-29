@@ -21,7 +21,7 @@
 - sessionStorage,localStorage,cookie区别, 怎么清除cookie？
 - 如何判断一个对象是否为函数
 
-> ES6
+> ES6   
 - CMD,AMD,CommonJS, ES Modules 说明
 - spread, rest 用法
 - let 与 var 的区别, 以及 箭头函数 与 function 的区别
