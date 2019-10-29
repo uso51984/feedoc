@@ -162,6 +162,53 @@ var person = {
 * 原生对象：是由 ECMAScript 规范定义的 JavaScript 内置对象，比如String、Math、RegExp、Object、Function等等。
 * 宿主对象：是由运行时环境（浏览器或 Node）提供，比如window、XMLHTTPRequest等等。
 
+## 如何在改变一个对象的属性时对其进行拦截。
+```js
+  const obj = {}
+  let bValue = ''
+  Object.defineProperty(obj, "b", {
+    get: function(){
+      return bValue+10;
+    },
+
+    set: function (newValue) {
+      console.log('newValue', newValue)
+      bValue = newValue;
+    }
+  });
+  obj.b = 3;
+  console.log(';2323', obj)
+```
+
+## JS中如何自定义事件。
+### 1. CustomEvent
+```js
+  let customEvent = new CustomEvent('customEventName', {
+    detail: {
+      a: 1
+    }
+  })
+  document.dispatchEvent(customEvent)
+  document.addEventListener('customEventName', e => {
+    console.log(e)
+    console.log(e.detail.a) // 1
+  })
+```
+### 2. createEvent
+```js
+let ev = document.createEvent('CustomEvent')
+ev.initCustomEvent('ev', false, true, {b: 2})
+document.dispatchEvent(ev)
+document.addEventListener('ev', e => {
+    console.log(e)
+    console.log(e.detail.b) // 2
+})
+```
+## JS中0.1 + 0.2 不等于0.3的具体原因是什么， 如何解决这个问题？
+
+## flat函数
+## 找出数组中和为给定值的两个元素，如：[1, 2, 3, 4, 5]中找出和为6的两个元素。
+
 ## 闭包
 闭包的定义：函数 A 内部有一个函数 B，函数 B 可以访问到函数 A 中的变量，那么函数 B 就是闭包。
 ```js
