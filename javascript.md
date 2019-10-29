@@ -1286,8 +1286,6 @@ element.removeChild(child);
 
 > cloneNode 和 normalize 所有类型的节点都有
 
-
-
 ## ul li li li  调换第一个和最后一个dom的位置
 ```js
   <ul>
