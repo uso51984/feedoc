@@ -6,4 +6,6 @@
 * [node](node.md)
 * [tool](tool.md)
 * [framework](framework.md)
+* [开放类](开发类.md)
+* [前端架构](前端架构.md)
 * [other](other.md)
