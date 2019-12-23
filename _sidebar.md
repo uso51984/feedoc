@@ -1,6 +1,6 @@
 * [简述](README.md)
 * [web综合部分](web.md)
-* [http](http.md)
+* [HTTP](http.md)
 * [css](css.md)
 * [javascript](javascript.md)
 * [react](react.md)
