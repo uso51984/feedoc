@@ -6,4 +6,5 @@
 * [node](node.md)
 * [tool](tool.md)
 * [framework](framework.md)
+* [开放性功能](开放性功能.md)
 * [other](other.md)

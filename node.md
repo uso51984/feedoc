@@ -2,6 +2,9 @@
 
 ## 包管理，版本锁定解释
 
+## 搭建内部npm; 本地包开发 流程说明(npm link)
+`https://github.com/verdaccio/verdaccio` 私有npm web项目
+
 ## node path 模块常用方法说明 join, resolve, dirname, relative
 1. `join`: 方法使用平台特定的分隔符作为定界符将所有给定的 path 片段连接在一起，然后规范化生成的路径。
 ```js
