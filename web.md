@@ -6,12 +6,6 @@
 
 ## 前端需要注意哪些SEO
 
-## http method都要哪些， 区别
-HTTP/1.1包含: `get` `head` `post` `options` `put` `delete` `trace` `connect`"
-### 安全方法（Safe Methods）:
-是指用户不管进行多少次操作，资源的状态都不会改变。比如说，`GET`和`HEAD`方法仅能获取资源，而不会执行动作（action），这些方法属于“安全”的方法。
-而`POST`，`PUT`，`DELETE`方法改变了资源的状态，可能会执行不安全的动作，使用者应该意识到这一点。
-
 ## 从游览器地址输入URL到显示页面的步骤
 
 ## 页面渲染过程
