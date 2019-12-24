@@ -71,6 +71,15 @@
 HTTP的头部信息是可以自定义的，服务器端和客户端都可以根据需要进行扩展。例如，
  * `X-Frame-Options`就常作为响应头部字段，用来表示网站内容是否允许被嵌入其他网站的`iframe`中。当其值为deny时就表示禁止被作为iframe嵌入，这样可以有效地防止常见的点击劫持。
 
+## 主体部分
+主体部分指的是请求体和响应体。头部字段content-type的值决定了主体的内容类型以及接收方对应的处理方式
+REST API设计规范中的`GET、POST、PUT、DELETE`四种请求方法中，GET请求没有请求体，
+### 常用的POST请求头部content-type值类型一般有以下4种:。
+1. `application/json`：最常用的请求头部，表示请求体是序列化后的JSON格式的数据（对于前端开发者来说可以理解为对JSON对象执行了JSON.stringify之后的字符串），Date、Regex这些数据类型是无法直接提交给服务器端的。
+2. `text/xml`：前后端交互中很少使用XML格式的数据，在RPC远程进程调用时通常选择这种格式的数据来进行通信。
+3. `multipart/form-data`：form表单的默认头部字段，常用于上传文件。
+4. `application/x-www-form-urlencoded`：form表单结构，用于传递字符串参数的键值对，传递格式和URL传参方式很像，如key1=value1&key2=value2。
+
 ## http method都要哪些， 区别
 HTTP/1.1包含: `get` `head` `post` `options` `put` `delete` `trace` `connect`"
 ### 安全方法（Safe Methods）:
