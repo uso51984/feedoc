@@ -29,3 +29,4 @@
 
 像Yahoo!、Facebook、Netflix和Airbnb这些公司在使用同构JavaScript。然而，同构JavaScript架构可能仅仅适用于某些类型的应用。同构JavaScript应用需要更多架构上的考虑，实现上也存在一定的复杂度。对于SPA来说，如果性能要求不高或者没有SEO需求（比如需要登录后才能使用），同构JavaScript带来的麻烦似乎远大于收益。
 
+## MVC 和 MVVM 说明
