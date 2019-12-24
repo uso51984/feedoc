@@ -7,7 +7,9 @@
 * [node](node.md)
 * [tool](tool.md)
 * [framework](framework.md)
+- 开发类
+  - [跨域](./开发类/跨域.md)
+  - [函数防抖、节流](./开发类/函数防抖节流.md)
 * [开放性功能](开放性功能.md)
-* [开放类](开发类.md)
 * [前端架构](前端架构.md)
 * [other](other.md)
