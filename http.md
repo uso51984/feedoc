@@ -75,8 +75,9 @@
 1. `allow:` 用于通知客户端能够支持的HTTP请求方法。当服务器端接收到不支持的HTTP请求方法时，会响应状态信息405 Method Not Allowed，同时把支持的方法写入allow字段。
 2. `content-encoding` : 用于告知客户端当前响应内容的编码方式，和请求头部字段accept-encoding的可选值一致，主要采用4种编码方式：gzip、compress、deflate、identity。3.`content-length表明主体部分的大小，单位为字节。
 4. `content-type:` 与请求头部字段accept对应，表明响应主体内容的MIME类型。
-5. `last-modified:` 资源的最后修改时间。同样是和缓存配合使用。
+5. `last-modified:` 资源的最后修改时间。同样是和缓存配合使用(一般会选文件的 `mtime`，表示文件内容的修改时间)。
 6. `expires:` 值为失效日期，缓存服务器在接收到含有头部字段 `expires` 的响应之后，会以缓存来应答请求，在expires值指定的日期之前，响应的值会一直被缓存，如果过期则在收到新的请求之后重新向源服务器发起请求。
+
 当头部 `cache-control` 值有 `max-age` 时，优先处理 `max-age` 。
 
 #### 四、 其他字段
@@ -95,6 +96,7 @@ REST API设计规范中的 `GET、POST、PUT、DELETE` 四种请求方法中，G
 2. `text/xml` ：前后端交互中很少使用XML格式的数据，在RPC远程进程调用时通常选择这种格式的数据来进行通信。
 3. `multipart/form-data` ：form表单的默认头部字段，常用于上传文件。
 4. `application/x-www-form-urlencoded` ：form表单结构，用于传递字符串参数的键值对，传递格式和URL传参方式很像，如key1=value1&key2=value2。
+> 更多类型： https://tool.oschina.net/commons/
 
 ### Cookie
 
@@ -218,34 +220,42 @@ TCP 连接有的时候会被浏览器和服务端维持一段时间。TCP 不需
 跟浏览器设置相关(Chrome 最多允许对同一个 Host 建立六个 TCP 连接。)
 
 ## 缓存策略
-> 通常浏览器缓存策略分为两种：`强缓存`和`协商缓存`，并且缓存策略都是通过设置 HTTP Header 来实现的。
 
-### 1.强缓存
-强缓存可以通过设置两种 HTTP Header 实现：`Expires` 和 `Cache-Control` 。强缓存表示在缓存期间不需要请求，`state code 为 200`。
+> 通常浏览器缓存策略分为两种： `强缓存` 和 `协商缓存` ，并且缓存策略都是通过设置 HTTP Header 来实现的。
+
+### 1. 强缓存
+
+强缓存可以通过设置两种 HTTP Header 实现： `Expires` 和 `Cache-Control` 。强缓存表示在缓存期间不需要请求， `state code 为 200` 。
+
 #### Expires
+
 ```
 Expires: Wed, 22 Oct 2018 08:41:00 GMT
 ```
+
 `Expires` 是 HTTP/1 的产物，表示资源会在 `Wed, 22 Oct 2018 08:41:00 GMT` 后过期，需要再次请求。并且 `Expires` 受限于本地时间，如果修改了本地时间，可能会造成缓存失效。
 
 #### Cache-control
+
 ```
 Cache-control: max-age=30
 ```
+
 Cache-Control 出现于 HTTP/1.1，优先级高于 Expires 。该属性值表示资源会在 30 秒后过期，需要再次请求。
 Cache-Control 可以在请求头或者响应头中设置，并且可以组合使用多种指令
 
 ![常见指令作用](./img/img2.png)
 
+### 2. 协商缓存
 
-### 2.协商缓存
-如果缓存过期了，就需要发起请求验证资源是否有更新。协商缓存可以通过设置两种 HTTP Header 实现：`Last-Modified` 和 `ETag` 。
+如果缓存过期了，就需要发起请求验证资源是否有更新。协商缓存可以通过设置两种 HTTP Header 实现： `Last-Modified` 和 `ETag` 。
 
 当浏览器发起请求验证资源时，如果资源没有做改变，那么服务端就会返回 304 状态码，并且更新浏览器缓存有效期。
 
 ![协商缓存](./img/协商缓存.png)
 
-#### 1.`Last-Modified` 和 `If-Modified-Since`
+#### 1. `Last-Modified` 和 `If-Modified-Since`
+
 `Last-Modified` 表示本地文件最后修改日期，If-Modified-Since 会将 Last-Modified 的值发送给服务器，询问服务器在该日期后资源是否有更新，有更新的话就会将新的资源发送回来，否则返回 304 状态码。
 
 但是 `Last-Modified` 存在一些弊端：
@@ -253,25 +263,29 @@ Cache-Control 可以在请求头或者响应头中设置，并且可以组合使
 如果本地打开缓存文件，即使没有对文件进行修改，但还是会造成 `Last-Modified` 被修改，服务端不能命中缓存导致发送相同的资源, 因为 `Last-Modified` 只能以秒计时，如果在不可感知的时间内修改完成文件，那么服务端会认为资源还是命中了，不会返回正确的资源
 因为以上这些弊端，所以在 HTTP / 1.1 出现了 ETag 。
 
-#### 2.`ETag` 和 `If-None-Match`
-`ETag` 类似于文件指纹，`If-None-Match` 会将当前 `ETag` 发送给服务器，询问该资源 `ETag` 是否变动，有变动的话就将新的资源发送回来。并且 `ETag` 优先级比 `Last-Modified` 高。
+
+#### 2. `ETag` 和 `If-None-Match`
+
+`ETag` 类似于文件指纹， `If-None-Match` 会将当前 `ETag` 发送给服务器，询问该资源 `ETag` 是否变动，有变动的话就将新的资源发送回来。并且 `ETag` 优先级比 `Last-Modified` 高。
 以上就是缓存策略的所有内容了，看到这里，不知道你是否存在这样一个疑问。如果什么缓存策略都没设置，那么浏览器会怎么处理？
 对于这种情况，浏览器会采用一个启发式的算法，通常会取响应头中的 Date 减去 Last-Modified 值的 10% 作为缓存时间。
 
-### 三、实际场景应用缓存策略
-#### 1.频繁变动的资源
-对于频繁变动的资源，首先需要使用 `Cache-Control: no-cache` 使浏览器每次都请求服务器，然后配合 `ETag` 或者 `Last-Modified` 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。
+### 实际场景应用缓存策略
 
+#### 频繁变动的资源
+对于频繁变动的资源，首先需要使用 `Cache-Control: no-cache` 使浏览器每次都请求服务器，然后配合 `ETag` 或者 `Last-Modified` 来验证资源是否有效。这样的做法虽然不能节省请求数量，但是能显著减少响应数据大小。
 
 ## 请详细描述TCP三次握手和四次挥手的过程
 
 ### TCP三次握手
-第一次握手：建立连接时，客户端发送`syn包(syn=j)`到服务器，并进入`SYN_SEND`状态，等待服务器确认；
-第二次握手：服务器收到syn包，必须确认客户的`syn（ack=j+1）`，同时自己也发送一个`SYN包（syn=k）`，即`SYN+ACK`包，此时服务器进入`SYN_RECV`状态；
-第三次握手：客户端收到服务器的`SYN+ACK`包，向服务器发送确认包`ACK(ack=k+1)`，此包发送完毕，客户端和服务器进入`established`状态，完成三次握手。
+第一次握手：建立连接时，客户端发送 `syn包(syn=j)` 到服务器，并进入 `SYN_SEND` 状态，等待服务器确认；
+第二次握手：服务器收到syn包，必须确认客户的 `syn（ack=j+1）` ，同时自己也发送一个 `SYN包（syn=k）` ，即 `SYN+ACK` 包，此时服务器进入 `SYN_RECV` 状态；
+第三次握手：客户端收到服务器的 `SYN+ACK` 包，向服务器发送确认包 `ACK(ack=k+1)` ，此包发送完毕，客户端和服务器进入 `established` 状态，完成三次握手。
 
 ### TCP四次挥手
+
 由于TCP连接是全双工的，因此每个方向都必须单独进行关闭。这原则是当一方完成它的数据发送任务后就能发送一个FIN来终止这个方向的连接。收到一个 FIN只意味着这一方向上没有数据流动，一个TCP连接在收到一个FIN后仍能发送数据。首先进行关闭的一方将执行主动关闭，而另一方执行被动关闭。
+
 1. TCP客户端发送一个FIN，用来关闭客户到服务器的数据传送。
 2. 服务器收到这个FIN，它发回一个ACK，确认序号为收到的序号加1。和SYN一样，一个FIN将占用一个序号。
 3. 服务器关闭客户端的连接，发送一个FIN给客户端。
@@ -279,3 +293,9 @@ Cache-Control 可以在请求头或者响应头中设置，并且可以组合使
 
 ## http状态码， 含义
 
+
+
+## http 向 https 做重定向应该使用哪个状态码
+一般用作 301 的较为多，但是也有使用 302，如果开启了 HSTS 则会使用 307
+
+如知乎使用了 302，淘宝使用了 301
