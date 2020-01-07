@@ -2,11 +2,15 @@
 * [web综合部分](web.md)
 * [HTTP/TCP](http.md)
 * [css](css.md)
+<<<<<<< HEAD
 - javascript
   - [基础](./javascript/基础.md)
   - [js的栈-堆-深拷贝-浅拷贝](./javascript/js的栈-堆-深拷贝-浅拷贝.md)
   - [深拷贝](./javascript/深拷贝.md)
   - [并发模型与事件循环](./javascript/并发模型与事件循环.md)
+=======
+* [javascript](javascript.md)
+>>>>>>> 93a4a8ed1736ca40221e277ad382f2ea2b07b152
 - react
   - [基础类](./react/基础类.md)
   - [HOC](./react/HOC.md)
