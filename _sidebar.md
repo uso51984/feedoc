@@ -40,4 +40,6 @@
 * [开放性功能](开放性功能.md)
 * [前端架构](前端架构.md)
 * [other](other.md)
-* [linux](./linux/shell命令.md)
+- linux
+  - [shell命令](shell命令.md)
+  - [git](git.md)
