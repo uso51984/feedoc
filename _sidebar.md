@@ -7,7 +7,14 @@
   - [js的栈-堆-深拷贝-浅拷贝](./javascript/js的栈-堆-深拷贝-浅拷贝.md)
   - [深拷贝](./javascript/深拷贝.md)
   - [并发模型与事件循环](./javascript/并发模型与事件循环.md)
+  - [跨域](./javascript/跨域.md)
+  - [继承](./javascript/继承.md)
+  - [模块化方案](./javascript/模块化方案.md)
   - [设计模式](./javascript/设计模式.md)
+- dom
+  - [dom](./dom/dom.md)
+  - [操作dom](./dom/操作dom.md)
+  - [事件处理程序](./dom/事件处理程序.md)
 - react
   - [基础类](./react/基础类.md)
   - [HOC](./react/HOC.md)
@@ -30,6 +37,7 @@
   - [OS命令注入攻击](./安全类/OS命令注入攻击.md)
 - 性能优化
   - [综述](./性能优化/综述.md)
+  - [浏览器性能监控](./性能优化/浏览器性能监控.md)
   - [内存泄露](./性能优化/内存泄露.md)
   - [dom操作篇](./性能优化/dom操作篇.md)
 - 正则表达式

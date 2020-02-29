@@ -299,3 +299,37 @@ Cache-Control 可以在请求头或者响应头中设置，并且可以组合使
 一般用作 301 的较为多，但是也有使用 302，如果开启了 HSTS 则会使用 307
 
 如知乎使用了 302，淘宝使用了 301
+
+
+## 什么情况会触发 options 请求
+options 通常用于，在跨域请求前发起预检请求，以检测请求是否被服务器接受。
+跨域请求中分为简单请求和预检请求两种，符合以下条件可视为简单请求：
+
+使用的 HTTP method 是 GET POST HEAD
+content-type 是 text/plain mutipart/form-data application/x-www-form-urlencode 三种之一
+请求头只能包含这些
+```c
+- Accept
+- Accept-Language
+- Content-Language
+- Content-Type （需要注意额外的限制）
+- DPR
+- Downlink
+- Save-Data
+- Viewport-Width
+- Width
+```
+复制代码除去简单请求外，其他请求就会先触发预检请求。
+常见的，比如使用
+
+`content-Type 为 application/xml 或 text/xml 的 POST 请求`
+设置自定义头，比如 X-JSON、X-MENGXIANHUI 等
+
+预检请求返回的头部报文中有
+```c
+Access-Control-Allow-Origin： 服务器可接受的请求来源
+Access-Control-Request-Method： 服务器实际请求所使用的 HTTP 方法
+Access-Control-Request-Headers： 服务器实际请求所携带的自定义首部字段。
+客户端基于从预检请求获得的信息来判断，是否继续执行跨域请求。
+```
+注意：跨域请求若想发送 `cookie` 信息，需要服务端设置 `resp.setHeader("Access-Control-Allow-Credentials","true");` 客户端设置 `withCredentials: true`
