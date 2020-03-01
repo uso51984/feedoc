@@ -1,7 +1,7 @@
 * [简述](README.md)
-* [web综合部分](web.md)
-* [HTTP/TCP](http.md)
-* [css](css.md)
+- library
+  * [打印](./library/打印.md)
+
 - javascript
   - [基础](./javascript/基础.md)
   - [js的栈-堆-深拷贝-浅拷贝](./javascript/js的栈-堆-深拷贝-浅拷贝.md)
@@ -10,22 +10,24 @@
   - [跨域](./javascript/跨域.md)
   - [继承](./javascript/继承.md)
   - [模块化方案](./javascript/模块化方案.md)
+  - [ArrayBuffer-Blob对象](./javascript/ArrayBuffer-Blob对象.md)
+  - [File-FileReader对象](./javascript/File-FileReader对象.md)
+  - [跨域](./javascript/跨域.md)
+  - [函数防抖、节流](./javascript/函数防抖节流.md)
   - [设计模式](./javascript/设计模式.md)
 - dom
   - [dom](./dom/dom.md)
   - [操作dom](./dom/操作dom.md)
   - [事件处理程序](./dom/事件处理程序.md)
+- 前端架构
+  - [前端架构](./架构/前端架构.md)
+  - [framework](./架构/framework.md)
+* [web综合部分](web.md)
 - react
   - [基础类](./react/基础类.md)
   - [HOC](./react/HOC.md)
   - [setState解读](./react/setState解读.md)
   - [异步组件](./react/异步组件.md)
-* [node](node.md)
-* [tool](tool.md)
-* [framework](framework.md)
-- 开发类
-  - [跨域](./开发类/跨域.md)
-  - [函数防抖、节流](./开发类/函数防抖节流.md)
 - 单元测试
   - [jest](./单元测试/jest.md)
 - 安全类
@@ -40,14 +42,21 @@
   - [浏览器性能监控](./性能优化/浏览器性能监控.md)
   - [内存泄露](./性能优化/内存泄露.md)
   - [dom操作篇](./性能优化/dom操作篇.md)
+- node
+  - [stream](./node/Stream.md)
+  - [path](./node/path.md)
+- tool
+  - [webpack](./工具/webpack.md)
+  - [tool](./工具/tool.md)
+* [css](css.md)
 - 正则表达式
   - [基础](./正则表达式/基础.md)
   - [进阶](./正则表达式/进阶.md)
   - [正则案例](./正则表达式/正则案例.md)
-* [webpack](webpack.md)
-* [开放性功能](开放性功能.md)
-* [前端架构](前端架构.md)
-* [other](other.md)
 - linux
   - [shell命令](shell命令.md)
   - [git](git.md)
+
+* [HTTP/TCP](http-tcp.md)
+* [开放性功能](开放性功能.md)
+* [other](other.md)
