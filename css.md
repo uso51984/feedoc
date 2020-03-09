@@ -784,7 +784,19 @@ vmax：当前较大的vw和vh
 * 优势：不破坏文档结构，没有副作用
 * 弊端： 代码量多
 
-### BFC (详细见这个https://blog.csdn.net/FE_dev/article/details/68954481)
 
-**BFC(Block formatting context)直译为”块级格式化上下文”**:。它是一个独立的渲染区域，只有Block-level box参与， 它规定了内部的Block-level Box如何布局，并且与这个区域外部毫不相干。
+## DPR
+css的逻辑像素没变，可物理像素却变多了，一个逻辑像素要对于多个物理像素，这两者的比例就是 DPR
+`DPR = 物理像素/css逻辑像素`
 
+可通过`window.devicePixelRatio` 获取设备的 DPR
+
+## link 和 @import 的区别
+### 从属关系区别
+`link`:是 html 提供的标签，不仅可以加载css样式表，还可以定义 `RSS、rel` 连接属性等。
+`@import`:是 css 提供的语法规则，用于导入样式表。
+
+
+### 加载顺序区别
+link：文件是同时加载。
+@import 引入的 CSS 将在页面加载完毕后被加载(导致闪烁问题)
