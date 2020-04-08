@@ -19,6 +19,7 @@ git merge origin/v1.0 #将本地分支与获取的远程分支合并
 git pull # 相当于是从远程获取最新版本并merge到本地
 git remote add origin git@192.168.102.17:pingtaizu/r.xcloud.cc.git #添加远程分支
 git revert commitHashId #对某一个commit进行撤销操作
+git push --tags #提交tag到服务端
 
 git staus  #查看哪些文件有修改
 git add file   #加入要提交的文件

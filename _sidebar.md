@@ -4,6 +4,8 @@
 
 - javascript
   - [基础](./javascript/基础.md)
+  - [函数柯里化](./javascript/函数柯里化.md)
+  - [函数记忆Memoize](./javascript/函数记忆Memoize.md)
   - [js的栈-堆-深拷贝-浅拷贝](./javascript/js的栈-堆-深拷贝-浅拷贝.md)
   - [深拷贝](./javascript/深拷贝.md)
   - [并发模型与事件循环](./javascript/并发模型与事件循环.md)
@@ -22,6 +24,7 @@
 - 前端架构
   - [前端架构](./架构/前端架构.md)
   - [framework](./架构/framework.md)
+  - [router](./架构/router.md)
 * [web综合部分](web.md)
 - react
   - [基础类](./react/基础类.md)
