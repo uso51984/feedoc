@@ -1,7 +1,7 @@
 * [简述](README.md)
 - library
   * [打印](./library/打印.md)
-
+  * [githubLib](./library/githubLib.md)
 - javascript
   - [基础](./javascript/基础.md)
   - [函数柯里化](./javascript/函数柯里化.md)
@@ -11,6 +11,7 @@
   - [并发模型与事件循环](./javascript/并发模型与事件循环.md)
   - [跨域](./javascript/跨域.md)
   - [继承](./javascript/继承.md)
+  - [尾调用优化](./javascript/尾调用优化.md)
   - [模块化方案](./javascript/模块化方案.md)
   - [ArrayBuffer-Blob对象](./javascript/ArrayBuffer-Blob对象.md)
   - [File-FileReader对象](./javascript/File-FileReader对象.md)
