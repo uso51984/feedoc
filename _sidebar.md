@@ -11,6 +11,7 @@
   - [并发模型与事件循环](./javascript/并发模型与事件循环.md)
   - [跨域](./javascript/跨域.md)
   - [继承](./javascript/继承.md)
+  - [创建对象的方式](./javascript/创建对象的方式.md)
   - [尾调用优化](./javascript/尾调用优化.md)
   - [模块化方案](./javascript/模块化方案.md)
   - [ArrayBuffer-Blob对象](./javascript/ArrayBuffer-Blob对象.md)
