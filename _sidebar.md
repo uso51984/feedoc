@@ -33,6 +33,8 @@
   - [HOC](./react/HOC.md)
   - [setState解读](./react/setState解读.md)
   - [异步组件](./react/异步组件.md)
+  - [fiber](./react/fiber.md)
+  - [虚拟DOM、diff算法](./react/虚拟DOM、diff算法.md)
 - 单元测试
   - [jest](./单元测试/jest.md)
 - 安全类
@@ -47,6 +49,7 @@
   - [浏览器性能监控](./性能优化/浏览器性能监控.md)
   - [内存泄露](./性能优化/内存泄露.md)
   - [dom操作篇](./性能优化/dom操作篇.md)
+  - [复杂度](./性能优化/复杂度.md)
 - 游览器
   - [游览器缓存机制](./游览器/游览器缓存机制.md)
 - node
@@ -54,11 +57,12 @@
   - [path](./node/path.md)
 - tool
   - [webpack](./工具/webpack.md)
+  - [lerna](./工具/lerna.md)
   - [tool](./工具/tool.md)
 * [css](css.md)
 - 正则表达式
   - [基础](./正则表达式/基础.md)
-  - [进阶](./正则表达式/进阶.md)
+  - [零宽断言](./正则表达式/零宽断言.md)
   - [正则案例](./正则表达式/正则案例.md)
 - linux
   - [shell命令](shell命令.md)

@@ -183,6 +183,7 @@ POST的请求，浏览器先发送header，服务器响应100 continue，浏览�
 4. 无法证明报文完整性，可能已遭篡改
 
 ## HTTPS
+端口、安全原理、中间人攻击
 
 将HTTP协议的通信接口部分用 `SSL` （Secure Socket Layer，安全套接字层，保障数据传输过程中不被截取和窃听的一种协议）或 `TLS` （Transport Layer Security，安全传输层协议，用来确保通信双方传递数据的保密性和完整性）
 
