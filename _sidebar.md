@@ -4,7 +4,7 @@
   * [githubLib](./library/githubLib.md)
 - javascript
   - [基础](./javascript/基础.md)
-  - [函数柯里化](./javascript/函数柯里化.md)
+  - [函数式编程](./javascript/函数式编程.md)
   - [函数记忆Memoize](./javascript/函数记忆Memoize.md)
   - [js的栈-堆-深拷贝-浅拷贝](./javascript/js的栈-堆-深拷贝-浅拷贝.md)
   - [深拷贝](./javascript/深拷贝.md)
