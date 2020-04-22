@@ -19,6 +19,8 @@
   - [跨域](./javascript/跨域.md)
   - [函数防抖、节流](./javascript/函数防抖节流.md)
   - [设计模式](./javascript/设计模式.md)
+- ES6
+  - [lest与const](./ES6/lest与const.md)
 - dom
   - [dom](./dom/dom.md)
   - [操作dom](./dom/操作dom.md)
