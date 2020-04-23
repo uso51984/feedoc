@@ -21,6 +21,8 @@
   - [设计模式](./javascript/设计模式.md)
 - ES6
   - [lest与const](./ES6/lest与const.md)
+  - [函数的扩展](./ES6/函数的扩展.md)
+
 - dom
   - [dom](./dom/dom.md)
   - [操作dom](./dom/操作dom.md)
