@@ -22,6 +22,8 @@
 - ES6
   - [lest与const](./ES6/lest与const.md)
   - [函数的扩展](./ES6/函数的扩展.md)
+  - [新增原始数据类型](./ES6/新增原始数据类型.md)
+  - [Proxy](./ES6/Proxy.md)
 
 - dom
   - [dom](./dom/dom.md)
