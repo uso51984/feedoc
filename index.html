@@ -56,6 +56,18 @@
       subMaxLevel: 2
     }
 
+    const address1 = '四川省成都市锦江区盐市口街道光华街新光华街-11号院'
+
+    const getDetailAddress = (address) =>{
+      const index = address.indexOf('区');
+      if (index !== -1){
+        return address.substring(index+1)
+      }
+
+      return ''
+    }
+
+
   </script>
   <script src="https://cdn.bootcss.com/docsify/4.9.4/docsify.min.js"></script>
 </body>

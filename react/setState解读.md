@@ -63,7 +63,7 @@ class App extends Component {
 
 合成事件中的 `setState` 写法比较常见，点击事件里去改变 `this.state.val` 的状态值，在 `increment` 事件中打个断点可以看到调用栈，流程图如下：
 
-![image.png](https://upload-images.jianshu.io/upload_images/1877305-2cefe98445fc0a3f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](../img/img57.png)
 
 从 `dispatchInteractiveEvent` 到 `callCallBack` 为止，都是对合成事件的处理和执行，从 `setState` 到 `requestWork` 是调用 `this.setState` 的逻辑，这边主要看下 `requestWork` 这个函数（从 `dispatchEvent` 到 `requestWork` 的调用栈是属于 `interactiveUpdates$1` 的 `try` 代码块，下文会提到）
 
@@ -156,7 +156,7 @@ class App extends Component {
 
 ```
 
-![image.png](https://upload-images.jianshu.io/upload_images/1877305-eb7d58de9c4647e6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![image.png](../img/img58.png)
 
 ```
 其实还是和合成事件一样，当 componentDidmount 执行的时候，react内部并没有更新，执行完componentDidmount  后才去 commitUpdateQueue 更新。这就导致你在 componentDidmount 中 setState 完去console.log拿的结果还是更新前的值。
