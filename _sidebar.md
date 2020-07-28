@@ -40,6 +40,7 @@
   - [setState解读](./react/setState解读.md)
   - [异步组件](./react/异步组件.md)
   - [fiber](./react/fiber.md)
+  - [hook](./react/hook.md)
   - [react 事件机制](./react/react事件机制.md)
   - [虚拟DOM、diff算法](./react/虚拟DOM、diff算法.md)
 - 单元测试

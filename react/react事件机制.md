@@ -443,3 +443,6 @@ React 事件系统的一大亮点，它将所有的合成事件都缓存在 对�
 
 1. 点击 button 之后，输出结果是什么？(ABCDE排序)
 2. 分别把 (1) 和 (2) 的 e.stopPropagation() 加上，输出结果又是什么？(ABCDE排序)
+
+## 参考
+对象池解读： https://www.jianshu.com/p/c67aac019f5f
