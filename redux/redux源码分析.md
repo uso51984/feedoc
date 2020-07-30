@@ -1,5 +1,5 @@
 # 1. redux 源码分析
-首先redux暴露了一下接口
+首先redux暴露的接口
 ```js
 export {
   createStore,
@@ -392,6 +392,7 @@ function assertReducerShape(reducers) {
 1. **finalReducers:** 存放所有key为函数的object
 2. **finalReducerKeys:** 存放所有key为函数的key的数组
 3. **return combination 函数:** 看代码注释
+
 ```js
 export default function combineReducers(reducers) {
   const reducerKeys = Object.keys(reducers)
@@ -496,6 +497,8 @@ export default function bindActionCreators(actionCreators, dispatch) {
 
 ## 1.4. applyMiddleware
 Middleware 可以让你包装 store 的 dispatch 方法
+* **(arguments):** 每个 `middleware` 接受 `Store` 的 `dispatch` 和 `getState` 函数作为命名参数，并返回一个函数。该函数会被传入 被称为 `next` 的下一个 `middleware` 的 `dispatch` 方法，并返回一个接收 `action` 的新函数，这个函数可以直接调用` next(action)`，或者在其他需要的时刻调用，甚至根本不去调用它。调用链中最后一个 `middleware` 会接受真实的 `store` 的 `dispatch` 方法作为 `next` 参数，并借此结束调用链。所以，`middleware` 的函数签名是 `({ getState, dispatch }) => next => action。`
+* **返回值:** `(Function)` 一个应用了 `middleware` 后的 `store enhancer`。这个 `store` `enhancer` 的签名是 `createStore => createStore`，但是最简单的使用方法就是直接作为最后一个 `enhancer` 参数传递给 `createStore()` 函数。
 
 ```js
 import compose from './compose'

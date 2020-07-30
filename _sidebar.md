@@ -43,6 +43,9 @@
   - [hook](./react/hook.md)
   - [react 事件机制](./react/react事件机制.md)
   - [虚拟DOM、diff算法](./react/虚拟DOM、diff算法.md)
+- redux
+  - [redux基础](./redux/redux基础.md)
+  - [redux基础](./redux/redux源码分析.md)
 - 单元测试
   - [jest](./单元测试/jest.md)
 - 安全类
