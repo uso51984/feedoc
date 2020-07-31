@@ -119,6 +119,7 @@ export function create({ defaultEqualityCheck = referenceEqual, }){
 
         const newDerivedState = memoizedMapStateRef.current(store.getState());
 
+        // 比较新旧derivedState是否有改变来render component
         if (!equalityCheck(newDerivedState, lastStateRef.current)) {
           forceUpdate(increment);
         }

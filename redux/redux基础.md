@@ -136,3 +136,4 @@ export default connect(mapStateToProps)(TodoApp)
 
 mapStateToProps 返回的新值，与 React-Redux 保留的旧值的引用如果不是浅层相等的，组件就会被重新渲染。
 
+## dva 和 redux 的区别
