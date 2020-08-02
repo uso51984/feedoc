@@ -1,5 +1,12 @@
 # object
-## 一、Object.defineProperty()
+
+## 数据属性和访问器属性
+### 数据属性
+`Configurable`、`Enumerable`、`Writable`、`Value`
+### 访问属性
+`Configurable`、`Enumerable`、`Get`、`Set`
+
+## Object.defineProperty()
 直接在一个对象上定义一个新属性，或者修改一个对象的现有属性，并返回此对象。应当直接在 `Object` 构造器对象上调用此方法，而不是在任意一个 `Object` 类型的实例上调用
 
 ### 语法
@@ -44,7 +51,7 @@ Object.defineProperty(obj, prop, descriptor) // 被传递给函数的对象。
 6. set
 属性的 `setter` 函数，如果没有 `setter`，则为 `undefined`。当属性值被修改时，会调用此函数。该方法接受一个参数（也就是被赋予的新值），会传入赋值时的 `this` 对象。
 
-## 二、Object.defineProperties()
+## Object.defineProperties()
 方法直接在一个对象上定义新的属性或修改现有属性，并返回该对象。
 
 ### 语法

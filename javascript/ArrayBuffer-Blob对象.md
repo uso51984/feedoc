@@ -1,4 +1,6 @@
-# ArrayBuffer 对象
+<div class="title">ArrayBuffer与Blob</div>
+
+## 1. ArrayBuffer
 `ArrayBuffer` 对象用来表示通用的、固定长度的原始二进制数据缓冲区, 这个对象可以看作内存数据的表达。
 
 它是一个字节数组，通常在其他语言中称为“byte array”
@@ -19,12 +21,12 @@ var buf1 = new ArrayBuffer(8);
 var buf2 = buf1.slice(0);
 ```
 
-# Blob 对象
+## 2. Blob 对象
 
-## 简介
+### 2.1. 简介
 `Blob`: 对象表示一个二进制文件的数据内容，比如一个图片文件的内容就可以通过 Blob 对象读写。它通常用来读写文件，它的名字是 `Binary Large Object`（二进制大型对象）的缩写。它与 `ArrayBuffer` 的区别在于，它用于操作二进制文件，而 `ArrayBuffer` 用于操作内存
 
-## 浏览器原生提供Blob()构造函数，用来生成实例对象。
+### 2.2. 浏览器原生提供Blob()构造函数，用来生成实例对象。
 
 ```js
 new Blob(array [, options])
@@ -47,8 +49,8 @@ var obj = { hello: 'world' };
 var blob = new Blob([ JSON.stringify(obj) ], {type : 'application/json'});
 ```
 
-## 实例属性和实例方法
-### Blob具有两个实例属性`size`和`type`，分别返回数据的大小和类型。
+### 2.3. 实例属性和实例方法
+Blob具有两个实例属性`size`和`type`，分别返回数据的大小和类型。
 
 ```js
 var htmlFragment = ['<a id="a"><b id="b">hey!</b></a>'];
@@ -57,14 +59,14 @@ myBlob.size // 32
 myBlob.type // "text/html"
 ```
 
-## Blob具有一个实例方法slice，用来拷贝原来的数据，返回的也是一个Blob实例。
+### 2.4. Blob具有一个实例方法slice，用来拷贝原来的数据，返回的也是一个Blob实例。
 ```js
 myBlob.slice(start, end, contentType)
 ```
 
 slice方法有三个参数，都是可选的。它们依次是起始的字节位置（默认为0）、结束的字节位置（默认为size属性的值，该位置本身将不包含在拷贝的数据之中）、新实例的数据类型（默认为空字符串）。
 
-## 获取文件信息
+### 2.5. 获取文件信息
 文件选择器`<input type="file">`用来让用户选取文件。出于安全考虑，浏览器不允许脚本自行设置这个控件的value属性，即文件必须是用户手动选取的，不能是脚本指定的。一旦用户选好了文件，脚本就可以读取这个文件。
 
 文件选择器返回一个 `FileList` 对象，该对象是一个类似数组的成员，每个成员都是一个 `File 实例对象`。`File 实例对象是一个特殊的 Blob 实例`，增加了`name`和`lastModifiedDate`属性。
@@ -87,7 +89,7 @@ function fileinfo(files) {
 
 除了文件选择器，拖放 API 的`dataTransfer.files`返回的也是一个`FileList 对象`，它的成员因此也是 `File` 实例对象。
 
-## 下载文件
+### 2.6. 下载文件
 AJAX 请求时，如果指定`responseType`属性为`blob`，下载下来的就是一个 `Blob` 对象。
 ```js
 function getBlob(url, callback) {
@@ -102,7 +104,7 @@ function getBlob(url, callback) {
 ```
 上面代码中，`xhr.response`拿到的就是一个 `Blob` 对象。
 
-## 生成 URL
+### 2.7. 生成 URL
 浏览器允许使用`URL.createObjectURL()`方法，针对 `Blob` 对象生成一个临时 URL，以便于某些 `API` 使用。这个 URL 以`blob://`开头，表明对应一个 Blob 对象，协议头后面是一个识别符，用来唯一对应内存里面的 Blob 对象。这一点与`data://URL（URL 包含实际数据）`和`file://URL`（本地文件系统里面的文件）都不一样。
 ```js
 var droptarget = document.getElementById('droptarget');
@@ -129,9 +131,10 @@ droptarget.ondrop = function (e) {
 浏览器处理` Blob URL` 就跟普通的 URL 一样，如果 Blob 对象不存在，返回`404`状态码；如果跨域请求，返回`403`状态码。
 `Blob URL` 只对`GET` 请求有效，如果请求成功，返回`200`状态码。由于` Blob URL` 就是普通 URL，因此可以下载。
 
-## 读取文件
+### 2.8. 读取文件
 取得 `Blob` 对象以后，可以通过`FileReader对象`，读取 Blob 对象的内容，即文件内容。
-### FileReader
+
+#### 2.8.1. FileReader
 `FileReader` 对象提供四个方法，处理 `Blob` `对象。Blob` 对象作为参数传入这些方法，然后以指定的格式返回。
 
 1. `FileReader.readAsText()`：返回文本，需要指定文本编码，默认为 UTF-8。

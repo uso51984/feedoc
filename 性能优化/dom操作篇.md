@@ -1,6 +1,6 @@
-# dom操作篇
+<div class="title">dom操作篇</div>
 
-### 需求一
+## 1. 插入list dom时
 
 将数组 ` ['Firefox', 'Chrome', 'Opera', 'Safari', 'Internet Explorer']` 展示到页面 `<div class='list-box'></div>` ;
 
@@ -14,8 +14,7 @@ listData.forEach((value) => {
     document.querySelector('.list-box').appendChild(liNode);
 })
 ```
-
-#### 优化
+### 1.1. 优化
 
 1. 缓存dom对象
 
@@ -64,19 +63,17 @@ listBoxEle.appendChild(fragment);
 
 因为文档片段存在于**内存中**，并不在DOM树中，所以将子元素插入到文档片段时不会引起页面[回流](https://developer.mozilla.org/zh-CN/docs/Glossary/Reflow)（对元素位置和几何上的计算）。因此，使用文档片段通常会带来更好的性能。
 
-### 需求二
-
-需要通过JavaScript给元素增加样式
+## 2. 需要通过JavaScript给元素增加样式
 比如如下代码：
 
-```
+```js
 element.style.fontSize = '24px';
 element.style.color = 'white';
 ```
 
 这样效率很低，每次修改style属性后都会触发元素的重绘，如果修改了的属性涉及大小和位置，将会导致回流。所以我们应当尽量避免多次为一个元素设置style属性，应当通过给其添加新的CSS类，来修改其CSS
 
-#### 优化： 通过类修改样式
+### 2.1. 优化： 通过类修改样式
 
 ```
 .element {
@@ -86,7 +83,7 @@ element.style.color = 'white';
 element.className += " element";
 ```
 
-### 三、事件监听优化
+## 3. 事件监听优化
 
 通过事件代理批量操作事件
 

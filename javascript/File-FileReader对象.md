@@ -1,4 +1,7 @@
-# File 对象
+<div class="title">File 对象</div>
+
+## 1. File
+
 `File` 对象代表一个文件，用来读写文件信息。它继承了 `Blob` 对象，或者说是一种特殊的 `Blob` 对象，所有可以使用 `Blob` 对象的场合都可以使用它。
 
 最常见的使用场合是表单的文件上传控件（<input type="file">），用户选中文件以后，浏览器就会生成一个数组，里面是每一个用户选中的文件，它们都是 `File 实例对象`。
@@ -11,7 +14,8 @@ file instanceof File // true
 ```
 上面代码中，`file`是用户选中的第一个文件，它是 `File` 的实例。
 
-## 构造函数
+### 1.1. 构造函数
+
 浏览器原生提供一个`File()`构造函数，用来生成 `File` 实例对象。
 ```js
 new File(array, name [, options])
@@ -35,7 +39,9 @@ var file = new File(
   }
 );
 ```
-## 实例属性和实例方法
+
+### 1.2. 实例属性和实例方法
+
 File 对象有以下实例属性。
 
 1. `File.lastModified`：最后修改时间
@@ -53,10 +59,10 @@ var myFile = new File([], 'file.bin', {
 
 > File 对象没有自己的实例方法，由于继承了 Blob 对象，因此可以使用 Blob 的实例方法slice()。
 
-# FileReader 对象
+## 2. FileReader 对象
 `FileReader` 对象用于读取 `File` 对象或 `Blob` 对象所包含的文件内容。
 
-## 浏览器原生FileReader构造函数，用来生成 FileReader 实例。
+### 2.1. 浏览器原生FileReader构造函数，用来生成 FileReader 实例。
 ```js
 var reader = new FileReader();
 FileReader 有以下的实例属性。
@@ -72,6 +78,7 @@ FileReader 有以下的实例属性。
 1. `FileReader.onloadend`：loadend事件（读取操作结束）的监听函数。
 1. `FileReader.onprogress`：progress事件（读取操作进行中）的监听函数。
 下面是监听load事件的一个例子。
+
 ```js
 // HTML 代码如下
 // <input type="file" onchange="onChange(event)">
@@ -88,7 +95,7 @@ function onChange(event) {
 ```
 上面代码中，每当文件控件发生变化，就尝试读取第一个文件。如果读取成功（load事件发生），就打印出文件内容。
 
-## FileReader 有以下实例方法。
+### 2.2. FileReader 有以下实例方法。
 
 1. `FileReader.abort()`：终止读取操作，`readyState`属性将变成2。
 1. `FileReader.readAsArrayBuffer()`：以 `ArrayBuffer` 的格式读取文件，读取完成后`result`属性将返回一个 ArrayBuffer 实例。
