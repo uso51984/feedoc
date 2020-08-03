@@ -1,12 +1,13 @@
-# redux 部分
+<div class="title">redux 部分</div>
 
-## 中间价(middleware)
+
+## 1. 中间价(middleware)
 
 它提供的是位于 action 被发起之后，到达 reducer 之前的扩展点。
 
 Middleware 接收了一个 next() 的 dispatch 函数，并返回一个 dispatch 函数，返回的函数会被作为下一个 middleware 的 next()，以此类推。由于 store 中类似 getState() 的方法依旧非常有用，我们将 store 作为顶层的参数，使得它可以在所有 middleware 中被使用。
 
-#### redux-thunk
+### 1.1. redux-thunk
 
 ``` js
 function createThunkMiddleware(extraArgument) {
@@ -26,35 +27,35 @@ thunk.withExtraArgument = createThunkMiddleware;
 export default thunk;
 ```
 
-## redux三大原则
+## 2. redux三大原则
 
 1. 单一数据源：整个应用的 `state` 被储存在一棵 `object tree` 中，并且这个 `object tree` 只存在于唯一一个 `store` 中。
 2. `State` 是只读的：唯一改变 `state` 的方法就是触发 `action` ， `action` 是一个用于描述已发生事件的普通对象。
 3. 使用纯函数来执行修改： `reducers` 描述 `action` 如何改变 `state tree`
 
-## redux如何处理异步
+## 3. redux如何处理异步
 
-## 在 reducer 中必须对 state 进行深拷贝吗？拷贝 state 不会很慢吗？
+## 4. 在 reducer 中必须对 state 进行深拷贝吗？拷贝 state 不会很慢吗？
 以不可变的方式更新 state 意味着浅拷贝，而非深拷贝。相比于深拷贝，浅拷贝更快，因为只需复制很少的字段和对象，实际的底层实现中也只是移动了若干指针而已。
 
 并且，深拷贝 state 会为每一个层（field）创建新的引用。由于 React-Redux 的 connect 函数是比较引用来判断数据是否变化的，这意味着即使其他数据没有变化，UI 组件也会被迫进行不必要的重新渲染。
 
 因此，你需要创建一个副本，并且更新受影响的各个嵌套的对象层级即可。尽管上述动作代价不会很大，但这也是为什么需要维护范式化及扁平化 state 的又一充分理由。
 
-## 为什么 Redux 需要不变性？
+## 5. 为什么 Redux 需要不变性？
 
-### `Redux` 和 `React-Redux` 都使用了浅比较。具体来说：
+### 5.1. `Redux` 和 `React-Redux` 都使用了浅比较。具体来说：
 
 * `Redux` 的 `combineReducers` 方法 浅比较 它调用的 `reducer` 的引用是否发生变化。
 * `React-Redux` 的 `connect` 方法生成的组件通过 浅比较根 `state` 的引用变化 与 `mapStateToProps` 函数的返回值，来判断包装的组件是否需要重新渲染。 以上浅比较需要不变性才能正常工作
 * 不可变数据的管理极大地提升了数据处理的安全性。
 * 进行时间旅行调试要求 r `educer` 是一个没有副作用的纯函数，以此在不同 `state` 之间正确的移动。
 
-## Redux 是如何使用浅比较的？
+## 6. Redux 是如何使用浅比较的？
 
 Redux 在 `combineReducers` 函数中使用浅比较来检查根 `state` 对象（ `root state object` ）是否发生变化，有修改时，返回经过修改的根 `state` 对象的拷贝，没有修改时，返回当前的根 `state` 对象。
 
-### combineReducers 是如何进行浅比较的？
+### 6.1. combineReducers 是如何进行浅比较的？
 
 Redux 中 store 推荐的结构 是将 state 对象按键值切分成 “层”（slice） 或者 “域”（domain），并提供独立的 reducer 方法管理各自的数据层。
 
@@ -85,7 +86,7 @@ combineReducers 遍历所有这些键值对，对于每一次循环：
 
 需要强调的一点是：如果所有 reducer 返回的 state 对象都与传入时一致，那么 combineReducers 将返回当前的根 state 对象，而不是新构建的。
 
-## React-Redux 是如何使用浅比较的？
+## 7. React-Redux 是如何使用浅比较的？
 
 React-Redux 使用浅比较来决定它包装的组件是否需要重新渲染。
 
@@ -97,7 +98,7 @@ React-Redux 使用浅比较来决定它包装的组件是否需要重新渲染�
 
 最后 React-Redux 会对根 state 对象的引用与传递给它的 state 对象进行浅比较，还会对每个 props 对象的每个值的引用与 mapStateToProps 返回的那些值进行一系列浅比较。
 
-## React-Redux 是如何使用浅比较来决定组件是否需要重新渲染的？
+## 8. React-Redux 是如何使用浅比较来决定组件是否需要重新渲染的？
 
 每次调用 React-Redux 提供的 connect 函数时，它储存的根 state 对象的引用，与当前传递给 store 的根 state 对象之间，会进行浅比较。如果相等，说明根 state 对象没有变化，也就无需重新渲染组件，甚至无需调用 mapStateToProps。
 
@@ -136,4 +137,4 @@ export default connect(mapStateToProps)(TodoApp)
 
 mapStateToProps 返回的新值，与 React-Redux 保留的旧值的引用如果不是浅层相等的，组件就会被重新渲染。
 
-## dva 和 redux 的区别
+## 9. dva 和 redux 的区别

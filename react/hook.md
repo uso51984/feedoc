@@ -1,21 +1,21 @@
-# hook
+<div class="title">hook</div>
 Hook 是什么？ Hook 是一个特殊的函数，它可以让你“钩入” React 的特性。
 
-## hook 解决的问题
+## 1. hook 解决的问题
 1. **在组件之间复用状态逻辑很难：** 之前的一些解决方案，比如 **render props** 和 **高阶组件**。但是这类方案需要重新组织你的组件结构，这可能会很麻烦，使代码难以理解。 Hook 从组件中提取状态逻辑，使得这些逻辑可以单独测试并复用
 2. **复杂组件变得难以理解：** 每个生命周期常常包含一些不相关的逻辑。
 3. **难以理解的 class：**class的`this`问题,class压缩的问题
 
-## Hook 使用规则
+## 2. Hook 使用规则
 Hook 就是 JavaScript 函数，但是使用它们会有两个额外的规则：
 1. 只能在函数最外层调用 Hook。不要在循环、条件判断或者子函数中调用。
 2. 只能在 React 的函数组件中调用 Hook或者自定义Hook。
 
-## hook原理
+## 3. hook原理
 React hook 系统概要示意图
 ![image.png](../img/img67.png)
 
-### Dispatcher
+### 3.1. Dispatcher
 `dispatcher` 是一个包含了 `hook` 函数的共享对象。基于 `ReactDOM` 的渲染状态，它将会被动态的分配或者清理，并且它能够确保用户不可在 `React` 组件之外获取 `hook`
 `dispatcher` 在每次 `hook` 的调用中都会被函数 `resolveDispatcher()` 解析。正如我之前所说，在 React 的渲染周期之外，这些都无意义了，React 将会打印出警告信息：“hook 只能在函数组件内部调用”
 
@@ -41,7 +41,7 @@ function renderRoot() {
 }
 ```
 
-### hook 队列
+### 3.2. hook 队列
 在 React 后台，hook 被表示为以调用顺序连接起来的节点。这样做原因是 hook 并不能简单的被创建然后丢弃。它们有一套特有的机制，也正是这些机制让它们成为 hook。一个 hook 会有数个属性，在继续学习之前，我希望你能牢记于心：
 
 1. 它的初始状态会在初次渲染的时候被创建。
@@ -106,7 +106,7 @@ function mountWorkInProgressHook(): Hook {
 通过断点可以查看到 `currentlyRenderingFiber`对象上面的memoizedState的值
 ![image.png](../img/img68.png)
 
-### State hook
+### 3.3. State hook
 `useState hook` 在后台使用了 `useReducer`，并且它将 `useReducer` 作为预定义的 `reducer`（详见源码）。这意味着，`useState` 返回的结果实际上已经是 `reducer` 状态，同时也是一个 `action dispatcher`。请看，如下是 state hook 使用的 reducer 处理器
 ```js
 function basicStateReducer(state, action) {
@@ -115,7 +115,7 @@ function basicStateReducer(state, action) {
 ```
 > 我们也可以传入 action 函数给 dispatcher，这个 action 函数可以接收旧的状态并返回新的。
 
-#### 例子
+#### 3.3.1. 例子
 ```js
 const ParentComponent = () => {
   const [name, setName] = useState()
@@ -275,7 +275,7 @@ export function useReducer<S, A>(
 }
 ```
 
-### effect hook
+### 3.4. effect hook
 effect hook 的一些属性
 1. 创建了 fiber 节点时被创建，但是在浏览器渲染之后运行。
 2. 如果给出了销毁指令，它们将在下一次绘制前被销毁。
@@ -355,10 +355,10 @@ Layout effect —— UnmountMutation | MountLayout.
 
 
 
-### useReducer 如何实现
+### 3.5. useReducer 如何实现
 源码在`ReactFiberHooks.js` 最新版的react v16.8.6。把`useReducer` 分成了`mountReducer`, `updateReducer`, `rerenderReducer`
 
-#### 1. mountReducer
+#### 3.5.1. mountReducer
 ```js
 function mountReducer<S, I, A>(
   reducer: (S, A) => S,
@@ -388,7 +388,7 @@ function mountReducer<S, I, A>(
 }
 ```
 
-### 插入的重点
+### 3.6. 插入的重点
 自定义的`reducer`函数会赋值给`lastRenderedReducer`, 而`lastRenderedReducer`的默认值是`basicStateReducer`如下代码.
 当`lastRenderedReducer`是默认值时就是`useState`的功能
 
@@ -400,7 +400,7 @@ function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
   return typeof action === 'function' ? action(state) : action;
 }
 ```
-#### 2. updateReducer
+#### 3.6.1. updateReducer
 ```js
 function updateReducer<S, I, A>(
   reducer: (S, A) => S,
@@ -550,7 +550,7 @@ function updateReducer<S, I, A>(
   return [hook.memoizedState, dispatch];
 }
 ```
-#### 3. rerenderReducer
+#### 3.6.2. rerenderReducer
 ```js
 function rerenderReducer<S, I, A>(
   reducer: (S, A) => S,

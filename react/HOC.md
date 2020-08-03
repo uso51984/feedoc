@@ -1,13 +1,13 @@
-# HOC
+<div class="title">HOC</div>
 
 高阶组件是参数为组件，返回值为新组件的函数。
 HOC 不会修改传入的组件，也不会使用继承来复制其行为。相反，HOC 通过将组件包装在容器组件中来组成新组件。HOC 是纯函数，没有副作用。
 
-## HOC的两种形式：属性代理 和 反向继承
+## 1. HOC的两种形式：属性代理 和 反向继承
 
-### 1. 属性代理（Props Proxy）
+### 1.1. 属性代理（Props Proxy）
 
-#### 实现
+#### 1.1.1. 实现
 
 ``` js
 // 无状态
@@ -31,7 +31,7 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-#### 作用
+#### 1.1.2. 作用
 
 因为属性代理类型的高阶组件返回的是一个标准的 `React.Component` 组件，所以在 React 标准组件中可以做什么，那在属性代理类型的高阶组件中就也可以做什么，比如：
 
@@ -40,9 +40,9 @@ function HigherOrderComponent(WrappedComponent) {
 3. 通过 ref 访问到组件实例
 4. 用其他元素包裹传入的组件 WrappedComponent
 
-### 2. 反向继承
+### 1.2. 反向继承
 
-#### 实现
+#### 1.2.1. 实现
 
 ``` js
 function HigherOrderComponent(WrappedComponent) {
@@ -54,14 +54,14 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-#### 渲染劫持
+#### 1.2.2. 渲染劫持
 
 1. 有条件地展示元素树（element tree）
 2. 操作由 render() 输出的 React 元素树
 3. 在任何由 render() 输出的 React 元素中操作 props
 4. 用其他元素包裹传入的组件 WrappedComponent （同 属性代理）
 
-#### 条件渲染
+#### 1.2.3. 条件渲染
 
 通过 props.isLoading 这个条件来判断渲染哪个组件。
 
@@ -79,7 +79,7 @@ function withLoading(WrappedComponent) {
 }
 ```
 
-#### 修改由 render() 输出的 React 元素树
+#### 1.2.4. 修改由 render() 输出的 React 元素树
 
 修改元素树：
 
@@ -103,7 +103,7 @@ function HigherOrderComponent(WrappedComponent) {
 }
 ```
 
-## HOC 有哪些限制?
+## 2. HOC 有哪些限制?
 
 除了它的好处之外，高阶组件还有一些注意事项。 以下列出的几个注意事项:
 

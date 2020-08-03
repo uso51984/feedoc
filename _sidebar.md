@@ -1,7 +1,11 @@
-* [简述](README.md)
-- library
-  * [打印](./library/打印.md)
-  * [githubLib](./library/githubLib.md)
+* [首页](README.md)
+- 安全类
+  - [XSS](./安全类/XSS.md)
+  - [CSRF](./安全类/CSRF.md)
+  - [SQL注入](./安全类/SQL注入.md)
+  - [点击劫持](./安全类/点击劫持.md)
+  - [URL跳转漏洞](./安全类/URL跳转漏洞.md)
+  - [OS命令注入攻击](./安全类/OS命令注入攻击.md)
 - javascript
   - [base](./javascript/基础.md)
   - [object-defineProperty](./javascript/object-defineProperty.md)
@@ -31,11 +35,6 @@
   - [dom](./dom/dom.md)
   - [操作dom](./dom/操作dom.md)
   - [事件处理程序](./dom/事件处理程序.md)
-- 前端架构
-  - [前端架构](./架构/前端架构.md)
-  - [framework](./架构/framework.md)
-  - [router](./架构/router.md)
-* [web综合部分](web.md)
 - react
   - [基础类](./react/基础类.md)
   - [HOC](./react/HOC.md)
@@ -56,29 +55,23 @@
 - 单元测试
   - [jest](./单元测试/jest.md)
   - [Cypress](./单元测试/Cypress.md)
-- 安全类
-  - [XSS](./安全类/XSS.md)
-  - [CSRF](./安全类/CSRF.md)
-  - [SQL注入](./安全类/SQL注入.md)
-  - [点击劫持](./安全类/点击劫持.md)
-  - [URL跳转漏洞](./安全类/URL跳转漏洞.md)
-  - [OS命令注入攻击](./安全类/OS命令注入攻击.md)
 - 性能优化
   - [综述](./性能优化/综述.md)
   - [浏览器性能监控](./性能优化/浏览器性能监控.md)
   - [内存泄露](./性能优化/内存泄露.md)
   - [dom操作篇](./性能优化/dom操作篇.md)
   - [复杂度](./性能优化/复杂度.md)
-- 游览器
-  - [游览器缓存机制](./游览器/游览器缓存机制.md)
-  - [V8的垃圾回收策略](./游览器/V8的垃圾回收策略.md)
-  - [监控](./游览器/监控.md)
+- 客户端
+  - [游览器缓存机制](./客户端/游览器缓存机制.md)
+  - [V8的垃圾回收策略](./客户端/V8的垃圾回收策略.md)
+  - [监控](./客户端/监控.md)
+  - [页面渲染过程](./客户端/页面渲染过程.md)
+  - [前端鉴权](./客户端/前端鉴权.md)
 - 网络原理
   - [DNS](./网络原理/DNS.md)
   - [tcp](./网络原理/tcp.md)
   - [http](./网络原理/http.md)
   - [https](./网络原理/https.md)
-
 - node
   - [stream](./node/Stream.md)
   - [path](./node/path.md)
@@ -93,8 +86,5 @@
   - [零宽断言](./正则表达式/零宽断言.md)
   - [正则案例](./正则表达式/正则案例.md)
 - linux
-  - [shell命令](shell命令.md)
-  - [git](git.md)
-
-* [开放性功能](开放性功能.md)
-* [other](other.md)
+  - [shell命令](./linux/shell命令.md)
+  - [git](./linux/git.md)

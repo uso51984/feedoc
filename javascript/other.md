@@ -32,10 +32,7 @@ console.log(myBick.name)
 console.log(youbick.name)
 ```
 
-### 3. 考察盒子模型和 box-sizing 属性，判断元素的尺寸和颜色。
-
 ### 4. 实现一个 fill 函数，不能用循环。
-
 ### 5. 手写 Promise.all
 ### 6. 算法题，怎么判断单链表相交。
 ### 7. 算法题，怎么找到第一个相交的节点。
@@ -47,10 +44,7 @@ console.log(youbick.name)
 ### 13. 避免 css 全局污染
 ### 14. equire 有什么性能问题
 ### 15. React.lazy 的原理是啥
-### 16. require 引入的模块 webpack 能做 Tree Shaking 吗？
-不能，Tree Shaking 需要静态分析，只有 ES6 的模块才支持。
 ### 17. 写一个 promise 重试函数，可以设置时间间隔和次数
-### 18. cookie 与 session 的区别
 ### 19. 算法题:https://leetcode-cn.com/problems/bu-ke-pai-zhong-de-shun-zi-lcof/
 
 ## 1.23. 找出数组中和为给定值的两个元素，如：[1, 2, 3, 4, 5]中找出和为6的两个元素。

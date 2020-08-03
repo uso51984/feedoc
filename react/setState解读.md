@@ -1,4 +1,4 @@
-# setState解读
+<div class="title">setState解读</div>
 
 ``` js
 export default class Demo extends React.PureComponent {
@@ -30,19 +30,19 @@ export default class Demo extends React.PureComponent {
 }
 ```
 
-## 问题：
+## 1. 问题：
 
 * `react`中`setState`是同步的还是异步？
 * 什么场景下是异步的，可不可能是同步，什么场景下又是同步？
 * 异步是正在的异步吗
 
-## setState真的是异步的吗？
+## 2. setState真的是异步的吗？
 
 `react` 源码分析 (版本是16.4.1)。
 为了方便理解和简化流程，我们默认react内部代码执行到`performWork`
 、`performWorkOnRoot`、`performSyncWork`、`performAsyncWork`这四个方法的时候，就是react去update更新并且作用到UI上。
 
-#### 一、合成事件中的setState
+#### 2.0.1. 一、合成事件中的setState
 
 ```js
 class App extends Component {
@@ -136,7 +136,7 @@ function interactiveUpdates$1(fn, a, b) {
 
 所以当你在 `increment` 中调用 `setState` 之后去console.log的时候，是属于 `try` 代码块中的执行，但是由于是合成事件，try代码块执行完state并没有更新，所以你输入的结果是更新前的 `state` 值，这就导致了所谓的"异步"，但是当你的try代码块执行完的时候（也就是你的increment合成事件），这个时候会去执行 `finally` 里的代码，在 `finally` 中执行了 `performSyncWork` 方法，这个时候才会去更新你的 `state` 并且渲染到UI上。
 
-#### 二、生命周期函数中的setState
+#### 2.0.2. 二、生命周期函数中的setState
 
 ```js
 class App extends Component {
@@ -162,7 +162,7 @@ class App extends Component {
 其实还是和合成事件一样，当 componentDidmount 执行的时候，react内部并没有更新，执行完componentDidmount  后才去 commitUpdateQueue 更新。这就导致你在 componentDidmount 中 setState 完去console.log拿的结果还是更新前的值。
 ```
 
-### 三、原生事件中的 `setState`
+### 2.1. 三、原生事件中的 `setState`
 
 ```js
 class App extends Component {
@@ -199,7 +199,7 @@ class App extends Component {
 
 原生事件的调用栈就比较简单了，因为没有走合成事件的那一大堆，直接触发click事件，到 `requestWork` , 在 `requestWork` 里由于 `expirationTime === Sync` 的原因，直接走了 `performSyncWork` 去更新，并不像合成事件或钩子函数中被return，所以当你在原生事件中setState后，能同步拿到更新后的state值。
 
-### 四、setTimeout中的 `setState`
+### 2.2. 四、setTimeout中的 `setState`
 
 ```js
 class App extends Component {
@@ -227,7 +227,7 @@ class App extends Component {
 
 举个栗子，比如之前的合成事件，由于你是 `setTimeout(_ => { this.setState()}, 0)` 是在 `try` 代码块中, 当你 `try` 代码块执行到 `setTimeout` 的时候，把它丢到列队里，并没有去执行，而是先执行的 `finally` 代码块，等 `finally` 执行完了， `isBatchingUpdates` 又变为了 `false` ，导致最后去执行队列里的 `setState` 时候， `requestWork` 走的是和原生事件一样的 `expirationTime === Sync` if分支，所以表现就会和原生事件一样，可以同步拿到最新的state值。
 
-### 五、 `setState` 中的批量更新
+### 2.3. 五、 `setState` 中的批量更新
 
 ```js
 class App extends Component {
@@ -286,7 +286,7 @@ function appendUpdateToQueue(queue, update, expirationTime) {
 }
 ```
 
-### 例子
+### 2.4. 例子
 
 ```js
 class App extends React.Component {
@@ -317,7 +317,7 @@ class App extends React.Component {
 
 结合上面分析的，钩子函数中的 `setState` 无法立马拿到更新后的值，所以前两次都是输出0，当执行到 `setTimeout` 里的时候，前面两个state的值已经被更新，由于 `setState` 批量更新的策略， `this.state.val` 只对最后一次的生效，为1，而在 `setTimmout` 中 `setState` 是可以同步拿到更新结果，所以 `setTimeout` 中的两次输出2，3，最终结果就为 `0, 0, 2, 3` 。
 
-### 总结 :
+### 2.5. 总结 :
 
 1. `setState` 只在合成事件和钩子函数中是“异步”的，在原生事件和 `setTimeout` 中都是同步的。
 2. `setState` 的“异步”并不是说内部由异步代码实现，其实本身执行的过程和代码都是同步的，只是合成事件和钩子函数的调用顺序在更新之前，导致在合成事件和钩子函数中没法立马拿到更新后的值，形式了所谓的“异步”，当然可以通过第二个参数 setState(partialState, callback) 中的callback拿到更新后的结果。

@@ -1,4 +1,6 @@
-# 1. redux 源码分析
+<div class="title">redux 源码分析</div>
+
+
 首先redux暴露的接口
 ```js
 export {
@@ -15,7 +17,7 @@ export {
 4. **applyMiddleware:**使用包含自定义功能的 middleware 来扩展 Redux 是一种推荐的方式.
 5. **compose:** 从右到左来组合多个函数。 这是函数式编程中的方法，为了方便，被放到了 Redux 里。
 
-## 1.1. createStore
+## 1. createStore
 这是redux的入口函数， 在使用redux之前都会调用该函数创建一个store对象。
 根据 createStore.js 代码结构可以看出使用的设计模式是`Revealing Module (揭示模块) 模式 `
 
@@ -164,7 +166,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 }
 
 ```
-### 1.1.1. createStore返回的store对象有哪些属性
+### 1.1. createStore返回的store对象有哪些属性
 ```js
   return {
     dispatch,
@@ -179,7 +181,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
 3. `replaceReducer:` 替换 store 当前用来计算 state 的 reducer
 4. `observable`： https://github.com/reduxjs/redux/issues/303#issuecomment-125184409
 
-### 1.1.2. createStore function 参数分析
+### 1.2. createStore function 参数分析
 从以下代码可以看出`createStore`接受三个参数：
 1. **reducer:** 必须是function类型
 2. **preloadedState:** 如果是function类型等价于第三个参数enhancer
@@ -217,7 +219,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
   let isDispatching = false
 ```
 
-### 1.1.3. getState
+### 1.3. getState
 返回 当前的state
 ```js
   function getState() {
@@ -225,7 +227,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
   }
 ```
 
-### 1.1.4. subscribe
+### 1.4. subscribe
 往nextListeners数组注册listener函数
 ```js
   function subscribe(listener) {
@@ -252,7 +254,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
   }
 ```
 
-### 1.1.5. dispatch
+### 1.5. dispatch
 从整个createStore的代码可以看出以下结论
 1. 调用dispatch函数是改变currentState的唯一途径
 2. 所有的数据都是放到currentState上的
@@ -299,9 +301,9 @@ function dispatch(action) {
   }
 ```
 
-## 1.2. combineReducers
+## 2. combineReducers
 combineReducers是一个闭包函数： 它把一个由多个不同 reducer 函数作为 value 的 object，合并成一个最终的 reducer 函数，然后就可以对这个 reducer 调用 createStore 方法。
-### 1.2.1. 各类异常参数检测函数
+### 2.1. 各类异常参数检测函数
 `getUndefinedStateErrorMessage`, `getUnexpectedStateShapeWarningMessage`, `assertReducerShape`
 
 ```js
@@ -387,7 +389,7 @@ function assertReducerShape(reducers) {
 }
 ```
 
-### 1.2.2. combineReducers function
+### 2.2. combineReducers function
 从代码可以看出`combineReducers` 传入一个`object`,并且定义了两个用于下一步的变量
 1. **finalReducers:** 存放所有key为函数的object
 2. **finalReducerKeys:** 存放所有key为函数的key的数组
@@ -460,7 +462,7 @@ export default function combineReducers(reducers) {
 }
 ```
 
-## 1.3. bindActionCreators
+## 3. bindActionCreators
 把一个 value 为不同 action creator 的对象，转成拥有同名 key 的对象。同时使用 dispatch 对每个 action creator 进行包装，以便可以直接调用它们。
 1. **actionCreators (Function or Object):** 一个 `action creator`，或者一个 value 是 `action creator` 的对象。
 2. **dispatch (Function):** 一个由 `Store` 实例提供的 `dispatch` 函数。
@@ -495,7 +497,7 @@ export default function bindActionCreators(actionCreators, dispatch) {
 }
 ```
 
-## 1.4. applyMiddleware
+## 4. applyMiddleware
 Middleware 可以让你包装 store 的 dispatch 方法
 * **(arguments):** 每个 `middleware` 接受 `Store` 的 `dispatch` 和 `getState` 函数作为命名参数，并返回一个函数。该函数会被传入 被称为 `next` 的下一个 `middleware` 的 `dispatch` 方法，并返回一个接收 `action` 的新函数，这个函数可以直接调用` next(action)`，或者在其他需要的时刻调用，甚至根本不去调用它。调用链中最后一个 `middleware` 会接受真实的 `store` 的 `dispatch` 方法作为 `next` 参数，并借此结束调用链。所以，`middleware` 的函数签名是 `({ getState, dispatch }) => next => action。`
 * **返回值:** `(Function)` 一个应用了 `middleware` 后的 `store enhancer`。这个 `store` `enhancer` 的签名是 `createStore => createStore`，但是最简单的使用方法就是直接作为最后一个 `enhancer` 参数传递给 `createStore()` 函数。
@@ -530,7 +532,7 @@ export default function applyMiddleware(...middlewares) {
 }
 
 ```
-### 1.4.1. middleware example
+### 4.1. middleware example
 ```js
 function logger({ getState }) {
   return (next) => (action) => {
