@@ -1,6 +1,6 @@
 <div class="title">斌 Fee knowledge</div>
 
-![ddd.jpeg](../img/img76.gif)
+![ddd.jpeg](img/img76.gif)
 
 <div class="features">
   <div class="feature">
@@ -15,6 +15,6 @@
     <h2>联系方式</h2>
     <p>Email: usocjb@163.com</p>
     <p>weixin: chenjianbin519846538</p>
-    <img src="/../img/img77.png" data-origin="../img/img77.png" class="wx-img">
+    <img src="img/img77.png" data-origin="img/img77.png" class="wx-img">
   </div>
 </div>
