@@ -55,6 +55,7 @@
   - [BFC](./css/BFC.md)
 - 单元测试
   - [jest](./单元测试/jest.md)
+  - [Cypress](./单元测试/Cypress.md)
 - 安全类
   - [XSS](./安全类/XSS.md)
   - [CSRF](./安全类/CSRF.md)
@@ -83,6 +84,7 @@
   - [path](./node/path.md)
 - tool
   - [webpack](./工具/webpack.md)
+  - [Rollup](./工具/lerna.md)
   - [lerna](./工具/lerna.md)
   - [tool](./工具/tool.md)
 * [css](css.md)
@@ -94,6 +96,5 @@
   - [shell命令](shell命令.md)
   - [git](git.md)
 
-* [HTTP/TCP](http-tcp.md)
 * [开放性功能](开放性功能.md)
 * [other](other.md)
